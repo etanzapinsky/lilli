@@ -51,16 +51,17 @@ def setup():
     run('sudo apt-get -y upgrade')
     run('sudo apt-get -y install nginx')
     run('sudo apt-get -y install uwsgi')
+    run('sudo apt-get -y install uwsgi-plugin-python')
     run('sudo apt-get -y install git')
     deploy()
-    run('sudo rm /etc/nginx/sites-enabled/default')
+    with settings(warn_only=True):
+        run('sudo rm /etc/nginx/sites-enabled/default')
+        run('sudo mkdir /etc/uwsgi/vassals/')
     with cd(code_dir):
         run('sudo cp lilli.conf /etc/nginx/sites-enabled/lilli.conf')
-        run('sudo mkdir /etc/uwsgi/vassals/')
         run('sudo cp lilli.ini /etc/uwsgi/vassals/')
         run('sudo cp uwsgi.conf /etc/init/uwsgi.conf')
     run('sudo service nginx restart')
-    run('sudo service uwsgi restart')
     run('sudo apt-get -y install python-pip')
     run('sudo pip install virtualenv')
     with cd(code_dir):
@@ -68,6 +69,7 @@ def setup():
         run('source %s/bin/activate' % env_name)
     with cd(code_dir + app_dir):
         run('sudo pip install -r requirements.txt')
+    run('sudo service uwsgi restart')
 
 @task
 def deploy():
@@ -79,6 +81,4 @@ def deploy():
 
 @task
 def start():
-    with cd(code_dir):
-        run('source %s/bin/activate' % env_name)
-        run('WEBAPP_SETTINGS=settings/production.py nohup python %srunserver.py >& server.log < /dev/null &' % app_dir, pty=False)
+    run('sudo service uwsgi restart')
