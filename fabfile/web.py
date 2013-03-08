@@ -60,8 +60,7 @@ def setup():
         run('sudo cp lilli.ini /etc/uwsgi/vassals/')
         run('sudo cp uwsgi.conf /etc/init/uwsgi.conf')
     run('sudo service nginx restart')
-    run('sudo service uwsgi start')
-    run('sudo service uwsgi start')
+    run('sudo service uwsgi restart')
     run('sudo apt-get -y install python-pip')
     run('sudo pip install virtualenv')
     with cd(code_dir):
