@@ -50,12 +50,18 @@ def setup():
     run('sudo apt-get update')
     run('sudo apt-get -y upgrade')
     run('sudo apt-get -y install nginx')
+    run('sudo apt-get -y install uwsgi')
     run('sudo apt-get -y install git')
     deploy()
     run('sudo rm /etc/nginx/sites-enabled/default')
     with cd(code_dir):
         run('sudo cp lilli.conf /etc/nginx/sites-enabled/lilli.conf')
+        run('sudo mkdir /etc/uwsgi/vassals/')
+        run('sudo cp lilli.ini /etc/uwsgi/vassals/')
+        run('sudo cp uwsgi.conf /etc/init/uwsgi.conf')
     run('sudo service nginx restart')
+    run('sudo service uwsgi start')
+    run('sudo service uwsgi start')
     run('sudo apt-get -y install python-pip')
     run('sudo pip install virtualenv')
     with cd(code_dir):
@@ -76,5 +82,4 @@ def deploy():
 def start():
     with cd(code_dir):
         run('source %s/bin/activate' % env_name)
-    # with cd(code_dir + app_dir):
-        run('WEBAPP_SETTINGS=%ssettings/production.py python %srunserver.py' % (app_dir, app_dir))
+        run('WEBAPP_SETTINGS=settings/production.py nohup python %srunserver.py >& server.log < /dev/null &' % app_dir, pty=False)
