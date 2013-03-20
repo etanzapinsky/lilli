@@ -3,12 +3,13 @@ import re
 from fabric.api import *
 from fabric.contrib.console import confirm
 
-ami = 'ami-3fec7956'
+ami = 'ami-b6089bdf' # 'ami-3fec7956'
 keypair = 'etanzkey'
 region = 'us-east-1'
 security_group = 'quick-start-1'
-instance_type = 't1.micro'
+instance_type = 'm1.small'
 elastic_ip = '75.101.152.63'
+# ebs = '/dev/sdc=none'
 
 code_dir = '/home/ubuntu/lilli/'
 app_dir = 'webapp/'
