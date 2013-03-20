@@ -16,26 +16,38 @@
             android:layout_height="wrap_content"
             android:id="@+id/spinner"/>
 
-    <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="59dp"
-            android:layout_gravity="right|center_vertical">
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="54dp">
 
         <EditText
-                android:layout_width="262dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="@string/uri"
-                android:id="@+id/editText"
+                android:id="@+id/url_string"
                 android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"/>
+                android:layout_alignParentTop="true"
+                android:layout_gravity="left|center_vertical"/>
 
         <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/send"
                 android:id="@+id/button"
-                android:layout_toRightOf="@+id/editText"
-                android:layout_alignTop="@+id/editText"/>
+                android:layout_toRightOf="@+id/url_string"
+                android:layout_alignTop="@+id/url_string"
+                android:layout_gravity="right|center_vertical"
+                android:onClick="requestURL" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="59dp"
+            android:layout_gravity="right|center_vertical">
+
     </RelativeLayout>
 
 </LinearLayout>

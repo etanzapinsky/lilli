@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MyActivity</string><string name="hello_string">Hi there world! Here is even more text that will appear in the layout view!</string><string name="send">Send</string><string name="uri">URL of Resource</string><string name="download_style">Choose a download method from the spinner below</string>
+    <string name="app_name">MyActivity</string>
+    <string name="hello_string">Bro!</string>
+    <string name="send">Send</string>
+    <string name="uri">URL of Resource</string>
+    <string name="download_style">Choose a download method from the spinner below</string>
+    <string name="title_activity_display_message">Hi there!</string>
 </resources>
