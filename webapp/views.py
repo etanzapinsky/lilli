@@ -15,6 +15,72 @@ Session = sessionmaker(bind=engine)
 def index():
     return render_template('index.html')
 
+@app.route('/purge', methods=["DELETE"])
+def purge():
+    session = Session()
+
+    auth = request.authorization
+    application = session.query(Application).filter(Application.name==auth.username).filter(Application.shared_secret==auth.password).first()
+
+    if application == None:
+        abort(401)
+
+    key = request.json['key']
+
+    obj = session.query(Object).filter(Object.public_key==key).filter(Object.application_id==edge.application_id).first()
+
+    if obj == None:
+        abort(404)
+
+    session.delete(obj)
+    session.commit()
+
+    return jsonify(success=True)
+
+@app.route('/delete', methods=["DELETE"])
+def delete():
+    session = Session()
+
+    auth = request.authorization
+    edge = session.query(Edge).filter(Edge.public_key==auth.username).filter(Edge.shared_secret==auth.password).first()
+
+    if edge == None:
+        abort(401)
+
+    key = request.json['key']
+
+    obj = session.query(Object).filter(Object.public_key==key).filter(Object.application_id==edge.application_id).first()
+
+    if obj == None:
+        abort(404)
+
+    obj.edges.remove(edge)
+
+    session.commit()
+
+    return jsonify(success=True)    
+
+@app.route('/get', methods=["GET"])
+def get():
+    session = Session()
+
+    auth = request.authorization
+    edge = session.query(Edge).filter(Edge.public_key==auth.username).filter(Edge.shared_secret==auth.password).first()
+
+    if edge == None:
+        abort(401)
+
+    key = request.json['key']
+
+    obj = session.query(Object).filter(Object.public_key==key).filter(Object.application_id==edge.application_id).first()
+
+    if obj == None:
+        abort(404)
+
+    neighbors = [] # Add magic here later
+
+    return jsonify(neighbors=neighbors, authoritative_location=obj.authoritative_location)
+
 @app.route('/associate', methods=['POST'])
 def associate():
     session = Session()
