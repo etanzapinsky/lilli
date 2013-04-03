@@ -15,6 +15,7 @@ import android.content.Intent
 import android.widget.EditText
 import com.example.androidapp.R
 import com.example.androidapp.RequestUrlActivity
+import java.net.URL
 
 class MyActivity() : Activity() {
     public final val EXTRA_MESSAGE : String = "com.example.androidapp.MESSAGE"
@@ -27,7 +28,11 @@ class MyActivity() : Activity() {
         val intent = Intent(this, javaClass<RequestUrlActivity>())
         val editText = findViewById(R.id.url_string) as EditText
         val message = editText.getText().toString()
-        intent.putExtra(EXTRA_MESSAGE, message)
-        startActivity(intent)
+        val down = OriginDownloader<String, Integer, Long>(this.getApplicationContext())
+        down.ready()
+        down.execute(message)
+//        intent.putExtra(EXTRA_MESSAGE, message)
+//        startActivity(intent)
+
     }
 }
