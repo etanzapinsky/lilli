@@ -13,9 +13,9 @@ import android.os.AsyncTask
 import java.io.InputStream
 
 
-abstract class Downloader<String, Integer, Long> : AsyncTask<String, Integer, Long>() {
+abstract class Downloader {
 
     abstract fun ready() : Boolean
 
-    abstract protected fun getData(resource : String) : InputStream?
+    abstract fun getData(resource : String) : InputStream?
 }

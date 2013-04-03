@@ -43,12 +43,11 @@
 
     </LinearLayout>
 
-    <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="59dp"
-            android:layout_gravity="right|center_vertical">
-
-    </RelativeLayout>
+    <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/received_image"
+            android:layout_weight="0.98"/>
 
 </LinearLayout>
 

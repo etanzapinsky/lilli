@@ -17,7 +17,7 @@ import android.util.Log
 import java.io.InputStream
 import java.net.HttpURLConnection
 
-class OriginDownloader<String, Integer, Long>(param : Context) : Downloader<String, Integer, Long>() {
+class OriginDownloader(param : Context) : Downloader() {
     val context = param
 
     public override fun ready() : Boolean {
@@ -35,8 +35,7 @@ class OriginDownloader<String, Integer, Long>(param : Context) : Downloader<Stri
     /**
      * Make sure to close input stream when done!
      */
-    protected override fun getData(resource : String) : InputStream? {
-        val input : InputStream?
+     public override fun getData(resource : String) : InputStream? {
         val url : URL = URL(resource as jet.String)
         val conn : HttpURLConnection = url.openConnection() as HttpURLConnection
         conn.setReadTimeout(10000 /* milliseconds */)
@@ -47,26 +46,6 @@ class OriginDownloader<String, Integer, Long>(param : Context) : Downloader<Stri
         conn.connect()
         val response : Int = conn.getResponseCode()
         Log.d("OriginDownloader", "The response is: " + response)
-        input = conn.getInputStream()
-        return input
+        return conn.getInputStream()
     }
-
-
-    /**
-     * For now we are going to assume the downloader is only passed one url at a time.
-     * It wouldn't be hard to extend it to take multiple urls at once, check out the example here:
-     * http://developer.android.com/reference/android/os/AsyncTask.html
-     */
-
-
-    protected override fun doInBackground(vararg resources : String?) : Long {
-        this.getData(resources.get(0))
-        val l = 1
-        return l as Long
-    }
-
-    protected override fun onPostExecute(result : Long?) {
-        //        showDialog("Downloaded " + result + " bytes")
-    }
-
 }
