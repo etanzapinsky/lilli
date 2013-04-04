@@ -1,0 +1,6 @@
+out/
+gen/
+.idea/
+
+*.iml
+project.properties
