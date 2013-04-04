@@ -9,9 +9,7 @@
 
 package com.example.androidapp
 
-import android.os.AsyncTask
 import java.io.InputStream
-
 
 trait Downloader {
 

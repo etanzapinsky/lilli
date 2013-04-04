@@ -12,7 +12,6 @@ package com.example.androidapp
 import java.net.URL
 import android.net.ConnectivityManager
 import android.content.Context
-import android.net.NetworkInfo
 import android.util.Log
 import java.io.InputStream
 import java.net.HttpURLConnection
