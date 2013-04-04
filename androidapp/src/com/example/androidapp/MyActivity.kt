@@ -21,26 +21,29 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 
 class MyActivity() : Activity() {
-    public final val EXTRA_MESSAGE : String = "com.example.androidapp.MESSAGE"
-    private var down : OriginDownloader? = null
-    private var imageView : ImageView? = null
+    class object {
+        public final val EXTRA_MESSAGE: String = "com.example.androidapp.MESSAGE"
+    }
+
+    var down : OriginDownloader? = null
+    var imageView : ImageView? = null
 
     protected override fun onCreate(savedInstanceState : Bundle?) {
-        super<Activity>.onCreate(savedInstanceState)
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
         val context = getApplicationContext()
         if (context != null)
             down = OriginDownloader(context)
-        imageView = findViewById(R.id.received_image) as ImageView
+        imageView = findViewById(R.id.received_image) as? ImageView
     }
 
     public fun requestURL() {
-        val editText = findViewById(R.id.url_string) as EditText
+        val editText = findViewById(R.id.url_string) as? EditText
         // This message (the thing in the text box) has to have http:// since the URL object doesn't do that for us
         // it will fail without it.
-        val message = editText.getText().toString()
+        val message = editText?.getText().toString()
 
-        if (down!!.ready()) {
+        if (down?.ready() == true) {
             AsyncDownloader().execute(message)
         }
         else {
@@ -57,12 +60,12 @@ class MyActivity() : Activity() {
         protected override fun doInBackground(vararg p0 : String?) : Bitmap? {
             val first = p0.get(0)
             if (first != null)
-                return BitmapFactory.decodeStream(down!!.getData(first))
+                return BitmapFactory.decodeStream(down?.getData(first))
             return null
         }
 
         protected override fun onPostExecute(result : Bitmap?) {
-            imageView!!.setImageBitmap(result)
+            imageView?.setImageBitmap(result)
         }
 
     }
