@@ -149,15 +149,14 @@ def associate(key):
 
     return jsonify(success=True)
 
-@app.route("/objects/<key>", methods=["PUT"])
+@app.route("/edges/<key>", methods=["PUT"])
 @requires_auth("edge")
-def associate(key):
-    obj = Object.query.filter_by(public_key=key, application_id=g.edge.application_id).first()
+def update_edge(key):
+    if key != g.edge.public_key:
+        abort(403)
 
-    if obj == None:
-        abort(404)
-
-    obj.edges.append(g.edge)
+    g.edge.ip = request.json["ip"]
+    g.edge.location = request.json["location"]
 
     db.session.commit()
 
