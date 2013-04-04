@@ -36,16 +36,16 @@ class OriginDownloader(param : Context) : Downloader() {
      * Make sure to close input stream when done!
      */
      public override fun getData(resource : String) : InputStream? {
-        val url : URL = URL(resource as jet.String)
-        val conn : HttpURLConnection = url.openConnection() as HttpURLConnection
-        conn.setReadTimeout(10000 /* milliseconds */)
-        conn.setConnectTimeout(15000 /* milliseconds */)
-        conn.setRequestMethod("GET")
-        conn.setDoInput(true)
+        val url : URL = URL(resource)
+        val conn : HttpURLConnection? = url.openConnection() as HttpURLConnection?
+        conn?.setReadTimeout(10000 /* milliseconds */)
+        conn?.setConnectTimeout(15000 /* milliseconds */)
+        conn?.setRequestMethod("GET")
+        conn?.setDoInput(true)
         // Starts the query
-        conn.connect()
-        val response : Int = conn.getResponseCode()
+        conn?.connect()
+        val response : Int? = conn?.getResponseCode()
         Log.d("OriginDownloader", "The response is: " + response)
-        return conn.getInputStream()
+        return conn?.getInputStream()
     }
 }

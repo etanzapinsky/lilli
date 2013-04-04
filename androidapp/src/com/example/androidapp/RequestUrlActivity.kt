@@ -7,7 +7,6 @@ import android.view.MenuItem
 import android.content.Intent
 import android.widget.TextView
 import android.support.v4.app.NavUtils
-import com.example.androidapp.R
 
 
 /**

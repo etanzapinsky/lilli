@@ -13,7 +13,6 @@ import android.os.Bundle
 import android.view.View
 import android.content.Intent
 import android.widget.EditText
-import com.example.androidapp.R
 import com.example.androidapp.RequestUrlActivity
 import java.net.URL
 import java.io.InputStream
@@ -30,7 +29,9 @@ class MyActivity() : Activity() {
     protected override fun onCreate(savedInstanceState : Bundle?) {
         super<Activity>.onCreate(savedInstanceState)
         setContentView(R.layout.main)
-        down = OriginDownloader(getApplicationContext())
+        val context = getApplicationContext()
+        if (context != null)
+            down = OriginDownloader(context)
         imageView = findViewById(R.id.received_image) as ImageView
     }
 
@@ -42,26 +43,28 @@ class MyActivity() : Activity() {
         val message = editText.getText().toString()
 
         if (down!!.ready()) {
-            AsyncDownloader<String, Integer, Long>().execute(message)
+            AsyncDownloader().execute(message)
         }
         else {
             // wruh-wroh
         }
     }
 
-    inner class AsyncDownloader<String, Integer, InputStream> : AsyncTask<String, Integer, InputStream>() {
+    inner class AsyncDownloader : AsyncTask<String, jet.Int, Bitmap>() {
         /**
          * For now we are going to assume the downloader is only passed one url at a time.
          * It wouldn't be hard to extend it to take multiple urls at once, check out the example here:
          * http://developer.android.com/reference/android/os/AsyncTask.html
          */
-        protected override fun doInBackground(vararg resources : String?) : InputStream {
-            return down!!.getData(resources.get(0)) as InputStream
+        protected override fun doInBackground(vararg p0 : String?) : Bitmap? {
+            val first = p0.get(0)
+            if (first != null)
+                return BitmapFactory.decodeStream(down!!.getData(first))
+            return null
         }
 
-        protected override fun onPostExecute(result : InputStream?) {
-            val bitmap : Bitmap? = BitmapFactory.decodeStream(result as java.io.InputStream)
-            imageView!!.setImageBitmap(bitmap)
+        protected override fun onPostExecute(result : Bitmap?) {
+            imageView!!.setImageBitmap(result)
         }
 
     }
