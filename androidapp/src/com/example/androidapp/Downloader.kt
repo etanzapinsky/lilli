@@ -18,4 +18,6 @@ abstract class Downloader {
     abstract fun ready() : Boolean
 
     abstract fun getData(resource : String) : InputStream?
+
+    abstract fun getDownloadTime() : Int
 }
