@@ -149,6 +149,19 @@ def associate(key):
 
     return jsonify(success=True)
 
+@app.route("/objects/<key>", methods=["PUT"])
+@requires_auth("edge")
+def associate(key):
+    obj = Object.query.filter_by(public_key=key, application_id=g.edge.application_id).first()
+
+    if obj == None:
+        abort(404)
+
+    obj.edges.append(g.edge)
+
+    db.session.commit()
+
+    return jsonify(success=True)
 
 @app.route("/objects", methods=["POST"])
 @requires_auth("application")
