@@ -5,7 +5,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 
 # development configuration
 DEBUG = True
-SQLALCHEMY_DATABASE_URI = "sqlite:///development.sqlite"
+SQLALCHEMY_DATABASE_URI = "mysql://root@localhost:3306/lilli"
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -21,10 +21,10 @@ class Application(db.Model):
     __tablename__ = "applications"
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    email = db.Column(db.String)
-    public_key = db.Column(db.String)
-    shared_secret = db.Column(db.String)
+    name = db.Column(db.String(length=255))
+    email = db.Column(db.String(length=255))
+    public_key = db.Column(db.String(length=255))
+    shared_secret = db.Column(db.String(length=255))
 
     def __init__(self, name, email, public_key, shared_secret):
         self.name = name
@@ -36,10 +36,10 @@ class Edge(db.Model):
     __tablename__ = "edges"
     
     id = db.Column(db.Integer, primary_key=True)
-    ip = db.Column(db.String)
-    location = db.Column(db.String)
-    public_key = db.Column(db.String)
-    shared_secret = db.Column(db.String)
+    ip = db.Column(db.String(length=255))
+    location = db.Column(db.String(length=255))
+    public_key = db.Column(db.String(length=255))
+    shared_secret = db.Column(db.String(length=255))
     application_id = db.Column(db.Integer, db.ForeignKey("applications.id"))
 
     application = db.relationship("Application", backref="edges")
@@ -53,8 +53,8 @@ class Object(db.Model):
     __tablename__ = "objects"
 
     id = db.Column(db.Integer, primary_key=True)
-    public_key = db.Column(db.String)
-    authoritative_location = db.Column(db.String)
+    public_key = db.Column(db.String(length=255))
+    authoritative_location = db.Column(db.Text)
     application_id = db.Column(db.Integer, db.ForeignKey("applications.id"))
 
     application = db.relationship("Application", backref="objects")
@@ -203,6 +203,10 @@ def signup():
     db.session.commit()
 
     return jsonify(name=name, email=email, public_key=public_key, shared_secret=shared_secret)
+
+@app.route("/hi", methods=["GET"])
+def hi():
+    return "hi there!"
 
 if __name__ == "__main__":
     app.run()

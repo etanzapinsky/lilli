@@ -48,29 +48,33 @@ def terminate():
 
 @task
 def setup():
-    run('sudo apt-get update')
-    run('sudo apt-get -y upgrade')
-    run('sudo apt-get -y install nginx')
-    run('sudo apt-get -y install uwsgi')
-    run('sudo apt-get -y install uwsgi-plugin-python')
-    run('sudo apt-get -y install git')
+    sudo('apt-get update')
+    sudo('apt-get -y upgrade')
+    sudo('DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-server')
+    sudo('apt-get -y install nginx')
+    sudo('apt-get -y install uwsgi')
+    sudo('apt-get -y install uwsgi-plugin-python')
+    sudo('apt-get -y install git')
     deploy()
     with settings(warn_only=True):
-        run('sudo rm /etc/nginx/sites-enabled/default')
-        run('sudo mkdir /etc/uwsgi/vassals/')
+        sudo('rm /etc/nginx/sites-enabled/default')
+        sudo('mkdir /etc/uwsgi/vassals/')
     with cd(code_dir):
-        run('sudo cp lilli.conf /etc/nginx/sites-enabled/lilli.conf')
-        run('sudo cp lilli.ini /etc/uwsgi/vassals/')
-        run('sudo cp uwsgi.conf /etc/init/uwsgi.conf')
-    run('sudo service nginx restart')
-    run('sudo apt-get -y install python-pip')
-    run('sudo pip install virtualenv')
+        sudo('cp lilli.conf /etc/nginx/sites-enabled/lilli.conf')
+        sudo('cp lilli.ini /etc/uwsgi/vassals/')
+        sudo('cp uwsgi.conf /etc/init/uwsgi.conf')
+    sudo('service nginx restart')
+    sudo('service mysql restart')
+    sudo('mysql -uroot -e "CREATE DATABASE lilli"')
+    sudo('apt-get -y install python-pip')
+    sudo('pip install virtualenv')
     with cd(code_dir):
         run('virtualenv --no-site-packages %s' % env_name)
         run('source %s/bin/activate' % env_name)
     with cd(code_dir + app_dir):
-        run('sudo pip install -r requirements.txt')
-    run('sudo service uwsgi restart')
+        sudo('pip install -r requirements.txt')
+        sudo('python -c "from app import db; db.create_all()"')
+    sudo('service uwsgi restart')
 
 @task
 def deploy():
@@ -79,7 +83,9 @@ def deploy():
             run('git clone git@github.com:etanzapinsky/lilli.git %s' % code_dir)
     with cd(code_dir):
         run('git pull')
+        run('source %s/bin/activate' % env_name)
+        run('pip install -r requirements.txt')
 
 @task
 def start():
-    run('sudo service uwsgi restart')
+    sudo('service uwsgi restart')
