@@ -22,7 +22,7 @@ import android.graphics.BitmapFactory
 
 class MyActivity() : Activity() {
     class object {
-        public final val EXTRA_MESSAGE: String = "com.example.androidapp.MESSAGE"
+        public val EXTRA_MESSAGE: String = "com.example.androidapp.MESSAGE"
     }
 
     var down : Downloader? = null

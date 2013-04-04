@@ -17,12 +17,10 @@ import android.util.Log
 import java.io.InputStream
 import java.net.HttpURLConnection
 
-class OriginDownloader(param : Context) : Downloader() {
-    val context = param
-
+class OriginDownloader(val context : Context) : Downloader() {
     public override fun ready() : Boolean {
-        val connMgr = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = connMgr.getActiveNetworkInfo()
+        val connMgr = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val networkInfo = connMgr?.getActiveNetworkInfo()
         if (networkInfo != null && networkInfo.isConnected()) {
             Log.d("Downloader", "Connected!")
             return true
@@ -37,14 +35,14 @@ class OriginDownloader(param : Context) : Downloader() {
      */
      public override fun getData(resource : String) : InputStream? {
         val url : URL = URL(resource)
-        val conn : HttpURLConnection? = url.openConnection() as HttpURLConnection?
-        conn?.setReadTimeout(10000 /* milliseconds */)
-        conn?.setConnectTimeout(15000 /* milliseconds */)
+        val conn = url.openConnection() as? HttpURLConnection
+        conn?.setReadTimeout(10000) /* milliseconds */
+        conn?.setConnectTimeout(15000) /* milliseconds */
         conn?.setRequestMethod("GET")
         conn?.setDoInput(true)
         // Starts the query
         conn?.connect()
-        val response : Int? = conn?.getResponseCode()
+        val response = conn?.getResponseCode()
         Log.d("OriginDownloader", "The response is: " + response)
         return conn?.getInputStream()
     }
