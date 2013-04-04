@@ -9,13 +9,12 @@
 
 package com.example.androidapp
 
-import java.io.InputStream
+import android.content.Context
+import java.io.File
 
 trait Downloader {
 
     fun ready() : Boolean
 
-    fun getData(resource : String) : InputStream?
-
-    fun getDownloadTime() : Int
+    fun getData(resource : String, context : Context?) : File?
 }
