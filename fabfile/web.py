@@ -51,6 +51,8 @@ def setup():
     sudo('apt-get update')
     sudo('apt-get -y upgrade')
     sudo('DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-server')
+    sudo('apt-get -y install python2.7-dev')
+    sudo('apt-get -y install libmysqlclient-dev')
     sudo('apt-get -y install nginx')
     sudo('apt-get -y install uwsgi')
     sudo('apt-get -y install uwsgi-plugin-python')
@@ -67,10 +69,11 @@ def setup():
     sudo('service mysql restart')
     sudo('mysql -uroot -e "CREATE DATABASE lilli"')
     sudo('apt-get -y install python-pip')
-    sudo('pip install virtualenv')
-    with cd(code_dir):
-        run('virtualenv --no-site-packages %s' % env_name)
-        run('source %s/bin/activate' % env_name)
+    sudo('pip install distribute --upgrade')
+    # sudo('pip install virtualenv')
+    # with cd(code_dir):
+    #     run('virtualenv --no-site-packages %s' % env_name)
+    #     run('source %s/bin/activate' % env_name)
     with cd(code_dir + app_dir):
         sudo('pip install -r requirements.txt')
         sudo('python -c "from app import db; db.create_all()"')
@@ -83,8 +86,9 @@ def deploy():
             run('git clone git@github.com:etanzapinsky/lilli.git %s' % code_dir)
     with cd(code_dir):
         run('git pull')
-        run('source %s/bin/activate' % env_name)
-        run('pip install -r requirements.txt')
+        # run('source %s/bin/activate' % env_name)
+        with cd(app_dir):
+            sudo('pip install -r requirements.txt')
 
 @task
 def start():
