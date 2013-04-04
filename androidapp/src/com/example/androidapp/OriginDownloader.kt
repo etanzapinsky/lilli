@@ -17,7 +17,7 @@ import android.util.Log
 import java.io.InputStream
 import java.net.HttpURLConnection
 
-class OriginDownloader(val context : Context) : Downloader() {
+class OriginDownloader(val context : Context) : Downloader {
     public override fun ready() : Boolean {
         val connMgr = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
         val networkInfo = connMgr?.getActiveNetworkInfo()
