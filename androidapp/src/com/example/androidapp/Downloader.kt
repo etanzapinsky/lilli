@@ -15,9 +15,9 @@ import java.io.InputStream
 
 trait Downloader {
 
-    abstract fun ready() : Boolean
+    fun ready() : Boolean
 
-    abstract fun getData(resource : String) : InputStream?
+    fun getData(resource : String) : InputStream?
 
-    abstract fun getDownloadTime() : Int
+    fun getDownloadTime() : Int
 }

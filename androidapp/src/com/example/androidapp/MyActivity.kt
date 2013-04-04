@@ -51,7 +51,7 @@ class MyActivity() : Activity() {
         }
     }
 
-    inner class AsyncDownloader : AsyncTask<String, jet.Int, Bitmap>() {
+    inner class AsyncDownloader : AsyncTask<String, Int, Bitmap>() {
         /**
          * For now we are going to assume the downloader is only passed one url at a time.
          * It wouldn't be hard to extend it to take multiple urls at once, check out the example here:
