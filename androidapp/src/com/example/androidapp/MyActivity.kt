@@ -13,7 +13,6 @@ import android.os.Bundle
 import android.view.View
 import android.content.Intent
 import android.widget.EditText
-import com.example.androidapp.RequestUrlActivity
 import java.net.URL
 import java.io.InputStream
 import android.os.AsyncTask
@@ -35,8 +34,7 @@ class MyActivity() : Activity() {
         imageView = findViewById(R.id.received_image) as ImageView
     }
 
-    public fun requestURL(view : View) {
-        val intent = Intent(this, javaClass<RequestUrlActivity>())
+    public fun requestURL() {
         val editText = findViewById(R.id.url_string) as EditText
         // This message (the thing in the text box) has to have http:// since the URL object doesn't do that for us
         // it will fail without it.

@@ -48,4 +48,8 @@ class OriginDownloader(param : Context) : Downloader() {
         Log.d("OriginDownloader", "The response is: " + response)
         return conn?.getInputStream()
     }
+
+    public override fun getDownloadTime() : Int {
+        return 1
+    }
 }
