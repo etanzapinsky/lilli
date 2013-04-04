@@ -1,6 +1,5 @@
 out/
 gen/
-lib/
 .idea/
 *.iml
 *.properties
