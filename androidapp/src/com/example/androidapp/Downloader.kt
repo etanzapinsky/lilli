@@ -13,7 +13,7 @@ import android.os.AsyncTask
 import java.io.InputStream
 
 
-abstract class Downloader {
+trait Downloader {
 
     abstract fun ready() : Boolean
 

@@ -25,7 +25,7 @@ class MyActivity() : Activity() {
         public final val EXTRA_MESSAGE: String = "com.example.androidapp.MESSAGE"
     }
 
-    var down : OriginDownloader? = null
+    var down : Downloader? = null
     var imageView : ImageView? = null
 
     protected override fun onCreate(savedInstanceState : Bundle?) {
