@@ -7,11 +7,10 @@ import android.content.ContentValues
 import android.os.ParcelFileDescriptor
 import android.database.MatrixCursor
 import com.github.kevinsawicki.http.HttpRequest
-import org.json.simple.JSONValue
-import org.json.simple.JSONObject
-import org.json.simple.JSONArray
 import android.content.ContentUris
 import android.content.UriMatcher
+import org.json.JSONObject
+import org.json.JSONArray
 
 class LilliProvider : ContentProvider() {
     class object {
@@ -22,7 +21,6 @@ class LilliProvider : ContentProvider() {
     }
 
     public override fun onCreate(): Boolean {
-        sUriMatcher.addURI(PACKAGE, "objects", LilliContract.OBJECTS)
         sUriMatcher.addURI(PACKAGE, "objects/#", LilliContract.OBJECTS_ID)
 
         return true
@@ -33,7 +31,7 @@ class LilliProvider : ContentProvider() {
         val request = buildRequestFromUri(uri, "GET")
 
         if (request.ok()) {
-            val response = JSONValue.parse(request.reader()) as? JSONObject
+            val response = JSONObject(request.body())
 
             val row = when (sUriMatcher.match(uri)) {
                 LilliContract.OBJECTS_ID -> projection?.map(objectsMap(response, uri))
@@ -43,7 +41,7 @@ class LilliProvider : ContentProvider() {
             cursor.addRow(row)
         }
 
-        return cursor;
+        return cursor
     }
 
     fun objectsMap(response: JSONObject?, uri: Uri?): (String) -> Any? {
@@ -94,21 +92,22 @@ class LilliProvider : ContentProvider() {
 
     fun buildAttributeRequest(uri: Uri?, values: ContentValues?, method: String): HttpRequest {
         val request = buildRequestFromUri(uri, method)
-        val stream = request.writer()
         val output = JSONObject()
 
         for (v in values?.valueSet()?.iterator()) {
             output.put(v.getKey(), v.getValue())
         }
 
-        output.writeJSONString(stream)
+        request.send(output.toString())
 
         return request
     }
 
     public override fun getType(uri: Uri?): String? {
-        val resource = uri?.getPathSegments()?.get(0) ?: "resource"
-        return "vnd.android.cursor.item/vnd.com.example.androidapp.provider.${resource}"
+        return when (sUriMatcher.match(uri)) {
+            LilliContract.OBJECTS_ID -> "vnd.android.cursor.item/vnd.com.example.androidapp.provider.objects"
+            else -> null
+        }
     }
 
     public override fun insert(uri: Uri?, values: ContentValues?): Uri? {

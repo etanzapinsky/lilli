@@ -3,8 +3,7 @@ package com.example.androidapp.provider;
 import android.net.Uri;
 
 public class LilliContract {
-    public static final int OBJECTS = 1;
-    public static final int OBJECTS_ID = 2;
+    public static final int OBJECTS_ID = 1;
 
     public static final class Objects {
         public static final String ID = "_ID";
