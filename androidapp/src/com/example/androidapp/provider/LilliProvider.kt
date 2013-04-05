@@ -14,14 +14,14 @@ import org.json.JSONArray
 
 class LilliProvider : ContentProvider() {
     class object {
-        val SCHEME = "http"
-        val AUTHORITY = "lilli.etanzapinsky.com"
-        val PACKAGE = "com.example.androidapp.provider"
-        val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH)
+        val ENDPOINT = "http://lilli.etanzapinsky.com"
+        val AUTHORITY = "com.example.androidapp.provider"
     }
 
+    val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH)
+
     public override fun onCreate(): Boolean {
-        sUriMatcher.addURI(PACKAGE, "objects/#", LilliContract.OBJECTS_ID)
+        sUriMatcher.addURI(AUTHORITY, "objects/#", LilliContract.OBJECTS_ID)
 
         return true
     }
@@ -61,12 +61,11 @@ class LilliProvider : ContentProvider() {
     }
 
     fun buildRequestFromUri(uri: Uri?, method: String): HttpRequest {
-        val url = Uri.Builder()
-                     .scheme(SCHEME)
-                    ?.authority(AUTHORITY)
-                    ?.appendPath(uri?.getPath())
-                    ?.build()
-                     .toString()
+        val url = Uri.parse(ENDPOINT)
+                ?.buildUpon()
+                ?.appendEncodedPath(uri?.getEncodedPath())
+                ?.build()
+                 .toString()
 
         val userinfo = uri?.getUserInfo()?.split(":")
         val username = userinfo?.get(0)
@@ -80,14 +79,6 @@ class LilliProvider : ContentProvider() {
 
     fun getFile(neighbors: JSONArray?) : String? {
         return null
-    }
-
-    fun buildUri(path: String?): Uri? {
-        return Uri.parse(PACKAGE)
-            ?.buildUpon()
-            ?.scheme("content")
-            ?.path(path)
-            ?.build()
     }
 
     fun buildAttributeRequest(uri: Uri?, values: ContentValues?, method: String): HttpRequest {
@@ -110,12 +101,21 @@ class LilliProvider : ContentProvider() {
         }
     }
 
+    fun getContentUri(uri: Uri?): Uri? {
+        return when (sUriMatcher.match(uri)) {
+            LilliContract.OBJECTS_ID -> LilliContract.Objects.CONTENT_URI
+            else -> null
+        }
+    }
+
     public override fun insert(uri: Uri?, values: ContentValues?): Uri? {
         val request = buildAttributeRequest(uri, values, "POST")
+        val content_uri = getContentUri(uri)
 
-        if (request.created()) {
-            val path = Uri.parse(request.location())?.getPath()
-            return buildUri(path)
+        if (request.ok()) {
+            val response = JSONObject(request.body())
+            val id = response.getLong("id")
+            return ContentUris.withAppendedId(content_uri, id)
         } else {
             return null
         }
