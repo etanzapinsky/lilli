@@ -9,32 +9,57 @@ import android.database.MatrixCursor
 import com.github.kevinsawicki.http.HttpRequest
 import org.json.simple.JSONValue
 import org.json.simple.JSONObject
-import java.util.ArrayList
 import org.json.simple.JSONArray
 import android.content.ContentUris
+import android.content.UriMatcher
 
 class LilliProvider : ContentProvider() {
     class object {
         val SCHEME = "http"
         val AUTHORITY = "lilli.etanzapinsky.com"
         val PACKAGE = "com.example.androidapp.provider"
-        val COLUMNS = array("_ID", "authoritative_location", "_data")
+        val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH)
     }
 
     public override fun onCreate(): Boolean {
-        return true;
+        sUriMatcher.addURI(PACKAGE, "objects", LilliContract.OBJECTS)
+        sUriMatcher.addURI(PACKAGE, "objects/#", LilliContract.OBJECTS_ID)
+
+        return true
     }
 
     public override fun query(uri: Uri?, projection: Array<out String>?, selection: String?, selectionArgs: Array<out String>?, sortOrder: String?): Cursor? {
-        val cursor = MatrixCursor(COLUMNS)
+        val cursor = MatrixCursor(projection)
         val request = buildRequestFromUri(uri, "GET")
 
         if (request.ok()) {
             val response = JSONValue.parse(request.reader()) as? JSONObject
-            cursor.addRow(response?.values())
+
+            val row = when (sUriMatcher.match(uri)) {
+                LilliContract.OBJECTS_ID -> projection?.map(objectsMap(response, uri))
+                else -> projection?.map { null }
+            }
+
+            cursor.addRow(row)
         }
 
         return cursor;
+    }
+
+    fun objectsMap(response: JSONObject?, uri: Uri?): (String) -> Any? {
+        val f : (String) -> Any? = {
+            (k) -> {
+            val value = response?.get(k)
+            if (k == LilliContract.Objects.ID) {
+                ContentUris.parseId(uri)
+            } else if (k == LilliContract.Objects.DATA) {
+                getFile(value as? JSONArray)
+            } else {
+                value
+            }
+          }
+        }
+        return f
     }
 
     fun buildRequestFromUri(uri: Uri?, method: String): HttpRequest {

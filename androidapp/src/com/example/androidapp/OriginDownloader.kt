@@ -13,11 +13,9 @@ import java.net.URL
 import android.net.ConnectivityManager
 import android.content.Context
 import android.util.Log
-import java.io.InputStream
 import java.net.HttpURLConnection
 import java.io.BufferedInputStream
 import java.io.FileOutputStream
-import android.os.Environment
 import java.io.File
 
 class OriginDownloader(val context : Context) : Downloader {

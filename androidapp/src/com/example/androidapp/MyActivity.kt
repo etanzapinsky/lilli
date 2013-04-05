@@ -13,8 +13,6 @@ import android.os.Bundle
 import android.widget.EditText
 import android.os.AsyncTask
 import android.widget.ImageView
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.widget.TextView
 import android.view.View
 import java.net.MalformedURLException
