@@ -21,6 +21,7 @@ class LilliProvider : ContentProvider() {
     val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH)
 
     public override fun onCreate(): Boolean {
+        sUriMatcher.addURI(AUTHORITY, "objects", LilliContract.OBJECTS)
         sUriMatcher.addURI(AUTHORITY, "objects/#", LilliContract.OBJECTS_ID)
 
         return true
@@ -94,34 +95,27 @@ class LilliProvider : ContentProvider() {
 
     public override fun getType(uri: Uri?): String? {
         return when (sUriMatcher.match(uri)) {
+            LilliContract.OBJECTS -> "vnd.android.cursor.dir/vnd.com.lilli.gulliver.provider.objects"
             LilliContract.OBJECTS_ID -> "vnd.android.cursor.item/vnd.com.lilli.gulliver.provider.objects"
-            else -> null
-        }
-    }
-
-    fun getContentUri(uri: Uri?): Uri? {
-        return when (sUriMatcher.match(uri)) {
-            LilliContract.OBJECTS_ID -> LilliContract.Objects.CONTENT_URI
             else -> null
         }
     }
 
     fun deriveIdFromUriAndResponse(uri: Uri?, response: JSONObject): String? {
         return when (sUriMatcher.match(uri)) {
-            LilliContract.OBJECTS_ID -> response.getString("public_key")
+            LilliContract.OBJECTS -> response.getString("public_key")
             else -> null
         }
     }
 
     public override fun insert(uri: Uri?, values: ContentValues?): Uri? {
         val request = buildAttributeRequest(uri, values, "POST")
-        val content_uri = getContentUri(uri)
 
         if (request.ok()) {
             val response = JSONObject(request.body())
             val id = deriveIdFromUriAndResponse(uri, response)
             if (id != null) {
-                return content_uri?.buildUpon()?.appendPath(id)?.build()
+                return uri?.buildUpon()?.appendPath(id)?.build()
             }
         }
 
