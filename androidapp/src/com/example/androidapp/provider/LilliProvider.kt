@@ -47,15 +47,13 @@ class LilliProvider : ContentProvider() {
     fun objectsMap(response: JSONObject?, uri: Uri?): (String) -> Any? {
         val f : (String) -> Any? = {
             (k) -> {
-            val value = response?.get(k)
-            if (k == LilliContract.Objects.ID) {
-                ContentUris.parseId(uri)
-            } else if (k == LilliContract.Objects.DATA) {
-                getFile(value as? JSONArray)
-            } else {
-                value
+                val value = response?.get(k)
+                when (value) {
+                    LilliContract.Objects.ID -> uri?.getLastPathSegment()
+                    LilliContract.Objects.DATA -> getFile(value as? JSONArray)
+                    else -> value
+                }
             }
-          }
         }
         return f
     }
@@ -108,17 +106,26 @@ class LilliProvider : ContentProvider() {
         }
     }
 
+    fun deriveIdFromUriAndResponse(uri: Uri?, response: JSONObject): String? {
+        return when (sUriMatcher.match(uri)) {
+            LilliContract.OBJECTS_ID -> response.getString("public_key")
+            else -> null
+        }
+    }
+
     public override fun insert(uri: Uri?, values: ContentValues?): Uri? {
         val request = buildAttributeRequest(uri, values, "POST")
         val content_uri = getContentUri(uri)
 
         if (request.ok()) {
             val response = JSONObject(request.body())
-            val id = response.getLong("id")
-            return ContentUris.withAppendedId(content_uri, id)
-        } else {
-            return null
+            val id = deriveIdFromUriAndResponse(uri, response)
+            if (id != null) {
+                return content_uri?.buildUpon()?.appendPath(id)?.build()
+            }
         }
+
+        return null
     }
 
     public override fun delete(uri: Uri?, selection: String?, selectionArgs: Array<out String>?): Int {
