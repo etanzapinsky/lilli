@@ -7,12 +7,15 @@ import java.io.InputStream
 
 class LilliDownloader : Downloader {
     override fun ready(): Boolean {
-        throw UnsupportedOperationException()
+        return true
     }
 
     override fun getData(resource: String, context: Context?): InputStream? {
         val resolver = context?.getContentResolver()
-        val uri = LilliContract.Objects.CONTENT_URI.buildUpon()?.appendPath(resource)?.build()
+        val uri = LilliContract.Objects.CONTENT_URI
+                .buildUpon()
+               ?.appendPath(resource)
+               ?.build()
 
         val input_stream = resolver?.openInputStream(uri)
 

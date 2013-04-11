@@ -10,6 +10,7 @@ import com.github.kevinsawicki.http.HttpRequest
 import android.content.UriMatcher
 import org.json.JSONObject
 import android.util.Log
+import com.lilli.gulliver.provider.LilliContract.Objects
 
 class LilliProvider : ContentProvider() {
     class object {
@@ -81,7 +82,7 @@ class LilliProvider : ContentProvider() {
     }
 
     fun getFile(response: JSONObject?) : String? {
-        return HttpRequest.get(response?.getString("authoritative_location"))?.body()
+        return HttpRequest.get(response?.getString(LilliContract.Objects.AUTHORITATIVE_LOCATION))?.body()
     }
 
     fun buildAttributeRequest(uri: Uri?, values: ContentValues?, method: String): HttpRequest {
