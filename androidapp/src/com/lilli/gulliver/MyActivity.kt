@@ -17,6 +17,13 @@ import android.widget.TextView
 import android.view.View
 import android.graphics.BitmapFactory
 import java.io.InputStream
+import java.net.MalformedURLException
+import java.io.File
+import android.content.ContentValues
+import android.os.Environment
+import java.nio.channels.FileChannel
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 class MyActivity() : Activity() {
     class object {
@@ -26,6 +33,7 @@ class MyActivity() : Activity() {
     var down : Downloader? = null
     var imageView : ImageView? = null
     var responseMessage : TextView? = null
+    var mDbHelper : StatDbHelper? = null
 
     protected override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +43,12 @@ class MyActivity() : Activity() {
             down = OriginDownloader(context)
         imageView = findViewById(R.id.received_image) as? ImageView
         responseMessage = findViewById(R.id.response_text) as? TextView
+        mDbHelper = StatDbHelper(getApplicationContext())
+    }
+
+    protected override fun onStop() {
+        super.onStop()
+        backupDb()
     }
 
     public fun requestURL(view : View) {
@@ -76,10 +90,23 @@ class MyActivity() : Activity() {
 
         protected override fun onPostExecute(result : InputStream?) {
             if (result != null) {
+                val db = mDbHelper?.getWritableDatabase()
                 val elapsed = System.nanoTime() - startTime
                 val bitmap = BitmapFactory.decodeStream(result)
                 imageView?.setImageBitmap(bitmap)
 //                responseMessage?.setText("Path: " + result.getAbsolutePath() + "\n" + (elapsed / 1000000) + " millisecs")
+//                imageView?.setImageBitmap(result)
+                responseMessage?.setText("Elapsed: " + (elapsed / 1000000) + " millisecs" + "\n DB:" + db?.getPath())
+                val values = ContentValues()
+                // change "something" later, now just want to try and avoid merge conflicts
+                values.put(StatContract.StatEntry.COLUMN_NAME_NAME, "something");
+                values.put(StatContract.StatEntry.COLUMN_NAME_SIZE, 1 as Int);
+                values.put(StatContract.StatEntry.COLUMN_NAME_TIME, 1 as Int);
+                values.put(StatContract.StatEntry.COLUMN_NAME_METHOD, "normal");
+                if (db != null) {
+                    val newRowId = db.insert(StatContract.StatEntry.TABLE_NAME, null, values)
+                }
+
                 // Since we know it's an image we can do this:
                 // NOTE: large images run out of memory to display --> dont do it.
 //                imageView?.setImageBitmap(BitmapFactory.decodeFile(result.getAbsolutePath()))
@@ -89,6 +116,30 @@ class MyActivity() : Activity() {
             }
         }
 
+    }
+
+    protected fun backupDb() {
+        try {
+            val sd = Environment.getExternalStoragePublicDirectory(Environment.MEDIA_SHARED)
+
+            if (sd!!.canWrite()) {
+                val currentDBPath = mDbHelper?.getWritableDatabase()?.getPath()
+                val backupDBPath = "lilli.db"
+                if (currentDBPath != null) {
+                    val currentDB = File(currentDBPath)
+                    val backupDB = File(sd, backupDBPath)
+
+                    if (currentDB.exists()) {
+                        val src = FileInputStream(currentDB).getChannel()
+                        val dst = FileOutputStream(backupDB).getChannel()
+                        dst.transferFrom(src, 0, src?.size())
+                        src?.close();
+                        dst.close();
+                    }
+                }
+            }
+        }
+        catch (e : Exception) {}
     }
 
 }
