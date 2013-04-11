@@ -1,4 +1,4 @@
-package com.example.androidapp.provider
+package com.lilli.gulliver.provider
 
 import android.content.ContentProvider
 import android.net.Uri
@@ -15,7 +15,7 @@ import org.json.JSONArray
 class LilliProvider : ContentProvider() {
     class object {
         val ENDPOINT = "http://lilli.etanzapinsky.com"
-        val AUTHORITY = "com.example.androidapp.provider"
+        val AUTHORITY = "com.lilli.gulliver.provider"
     }
 
     val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH)
@@ -94,7 +94,7 @@ class LilliProvider : ContentProvider() {
 
     public override fun getType(uri: Uri?): String? {
         return when (sUriMatcher.match(uri)) {
-            LilliContract.OBJECTS_ID -> "vnd.android.cursor.item/vnd.com.example.androidapp.provider.objects"
+            LilliContract.OBJECTS_ID -> "vnd.android.cursor.item/vnd.com.lilli.gulliver.provider.objects"
             else -> null
         }
     }

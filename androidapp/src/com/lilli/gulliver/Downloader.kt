@@ -7,7 +7,7 @@
  */
 
 
-package com.example.androidapp
+package com.lilli.gulliver
 
 import android.content.Context
 import java.io.File

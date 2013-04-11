@@ -7,7 +7,7 @@
  */
 
 
-package com.example.androidapp
+package com.lilli.gulliver
 
 import java.net.URL
 import android.net.ConnectivityManager

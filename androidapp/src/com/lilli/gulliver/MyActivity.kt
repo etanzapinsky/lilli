@@ -6,7 +6,7 @@
  * To change this template use File | Settings | File Templates.
  */
 
-package com.example.androidapp
+package com.lilli.gulliver
 
 import android.app.Activity
 import android.os.Bundle
@@ -20,7 +20,7 @@ import java.io.File
 
 class MyActivity() : Activity() {
     class object {
-        public val EXTRA_MESSAGE: String = "com.example.androidapp.MESSAGE"
+        public val EXTRA_MESSAGE: String = "com.lilli.gulliver.MESSAGE"
     }
 
     var down : Downloader? = null
@@ -61,7 +61,7 @@ class MyActivity() : Activity() {
 
         /**
          * For now we are going to assume the downloader is only passed one url at a time.
-         * It wouldn't be hard to extend it to take multiple urls at once, check out the example here:
+         * It wouldn't be hard to extend it to take multiple urls at once, check out the lilli here:
          * http://developer.android.com/reference/android/os/AsyncTask.html
          */
         protected override fun doInBackground(vararg p0 : String?) : File? {
