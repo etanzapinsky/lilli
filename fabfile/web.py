@@ -4,7 +4,7 @@ from fabric.api import *
 from fabric.contrib.console import confirm
 
 ami = 'ami-b6089bdf' # 'ami-3fec7956'
-keypair = 'etanzkey'
+keypair = 'samaaronskey'
 region = 'us-east-1'
 security_group = 'quick-start-1'
 instance_type = 'm1.small'
