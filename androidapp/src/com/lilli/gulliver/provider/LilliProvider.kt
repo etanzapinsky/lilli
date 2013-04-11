@@ -11,6 +11,7 @@ import android.content.ContentUris
 import android.content.UriMatcher
 import org.json.JSONObject
 import org.json.JSONArray
+import android.util.Log
 
 class LilliProvider : ContentProvider() {
     class object {
@@ -28,16 +29,21 @@ class LilliProvider : ContentProvider() {
     }
 
     public override fun query(uri: Uri?, projection: Array<out String>?, selection: String?, selectionArgs: Array<out String>?, sortOrder: String?): Cursor? {
+        Log.d(AUTHORITY, uri.toString())
+
         val cursor = MatrixCursor(projection)
         val request = buildRequestFromUri(uri, "GET")
 
         if (request.ok()) {
+            Log.d(AUTHORITY, "Request was OK!")
             val response = JSONObject(request.body())
 
             val row = when (sUriMatcher.match(uri)) {
                 LilliContract.OBJECTS_ID -> projection?.map(objectsMap(response, uri))
                 else -> projection?.map { null }
             }
+
+            Log.d(AUTHORITY, "Matcher was: %d".format(sUriMatcher.match(uri)))
 
             cursor.addRow(row)
         }
