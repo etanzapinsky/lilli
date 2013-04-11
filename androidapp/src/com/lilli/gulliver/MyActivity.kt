@@ -91,17 +91,19 @@ class MyActivity() : Activity() {
         protected override fun onPostExecute(result : InputStream?) {
             if (result != null) {
                 val db = mDbHelper?.getWritableDatabase()
+                val file = File(getApplicationContext()?.getCacheDir(), "temp")
+                file.writeBytes(result.readBytes())
                 val elapsed = System.nanoTime() - startTime
-                val bitmap = BitmapFactory.decodeStream(result)
-                imageView?.setImageBitmap(bitmap)
+//                val bitmap = BitmapFactory.decodeStream(result)
+//                imageView?.setImageBitmap(bitmap)
 //                responseMessage?.setText("Path: " + result.getAbsolutePath() + "\n" + (elapsed / 1000000) + " millisecs")
 //                imageView?.setImageBitmap(result)
                 responseMessage?.setText("Elapsed: " + (elapsed / 1000000) + " millisecs" + "\n DB:" + db?.getPath())
                 val values = ContentValues()
                 // change "something" later, now just want to try and avoid merge conflicts
                 values.put(StatContract.StatEntry.COLUMN_NAME_NAME, "something");
-                values.put(StatContract.StatEntry.COLUMN_NAME_SIZE, 1 as Int);
-                values.put(StatContract.StatEntry.COLUMN_NAME_TIME, 1 as Int);
+                values.put(StatContract.StatEntry.COLUMN_NAME_SIZE, file.length());
+                values.put(StatContract.StatEntry.COLUMN_NAME_TIME, elapsed);
                 values.put(StatContract.StatEntry.COLUMN_NAME_METHOD, "normal");
                 if (db != null) {
                     val newRowId = db.insert(StatContract.StatEntry.TABLE_NAME, null, values)
@@ -120,7 +122,7 @@ class MyActivity() : Activity() {
 
     protected fun backupDb() {
         try {
-            val sd = Environment.getExternalStoragePublicDirectory(Environment.MEDIA_SHARED)
+            val sd = Environment.getExternalStorageDirectory()
 
             if (sd!!.canWrite()) {
                 val currentDBPath = mDbHelper?.getWritableDatabase()?.getPath()

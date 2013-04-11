@@ -25,7 +25,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="@string/uri"
                 android:id="@+id/url_string"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
