@@ -15,8 +15,8 @@ import android.os.AsyncTask
 import android.widget.ImageView
 import android.widget.TextView
 import android.view.View
-import java.net.MalformedURLException
-import java.io.File
+import android.graphics.BitmapFactory
+import java.io.InputStream
 
 class MyActivity() : Activity() {
     class object {
@@ -51,7 +51,7 @@ class MyActivity() : Activity() {
         }
     }
 
-    inner class AsyncDownloader : AsyncTask<String, Int, File?>() {
+    inner class AsyncDownloader : AsyncTask<String, Int, InputStream?>() {
         var startTime : Long = 0
 
         protected override fun onPreExecute() {
@@ -64,24 +64,22 @@ class MyActivity() : Activity() {
          * It wouldn't be hard to extend it to take multiple urls at once, check out the lilli here:
          * http://developer.android.com/reference/android/os/AsyncTask.html
          */
-        protected override fun doInBackground(vararg p0 : String?) : File? {
+        protected override fun doInBackground(vararg p0 : String?) : InputStream? {
             val first = p0.get(0)
-            try {
-                if (first != null)
-                    return down?.getData(first, getApplicationContext())
-//                    return BitmapFactory.decodeStream()
+
+            if (first != null) {
+                return down?.getData(first, getApplicationContext())
             }
-            catch (e : MalformedURLException) {
-                return null
-            }
+
             return null
         }
 
-        protected override fun onPostExecute(result : File?) {
+        protected override fun onPostExecute(result : InputStream?) {
             if (result != null) {
                 val elapsed = System.nanoTime() - startTime
-//                imageView?.setImageBitmap(result)
-                responseMessage?.setText("Path: " + result.getAbsolutePath() + "\n" + (elapsed / 1000000) + " millisecs")
+                val bitmap = BitmapFactory.decodeStream(result)
+                imageView?.setImageBitmap(bitmap)
+//                responseMessage?.setText("Path: " + result.getAbsolutePath() + "\n" + (elapsed / 1000000) + " millisecs")
                 // Since we know it's an image we can do this:
                 // NOTE: large images run out of memory to display --> dont do it.
 //                imageView?.setImageBitmap(BitmapFactory.decodeFile(result.getAbsolutePath()))

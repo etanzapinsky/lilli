@@ -7,10 +7,8 @@ import android.content.ContentValues
 import android.os.ParcelFileDescriptor
 import android.database.MatrixCursor
 import com.github.kevinsawicki.http.HttpRequest
-import android.content.ContentUris
 import android.content.UriMatcher
 import org.json.JSONObject
-import org.json.JSONArray
 import android.util.Log
 
 class LilliProvider : ContentProvider() {
@@ -39,7 +37,7 @@ class LilliProvider : ContentProvider() {
             val response = JSONObject(request.body())
 
             val row = when (sUriMatcher.match(uri)) {
-                LilliContract.OBJECTS_ID -> projection?.map(objectsMap(response, uri))
+                LilliContract.OBJECTS_ID -> projection?.map(objectsMap(response))
                 else -> projection?.map { null }
             }
 
@@ -51,13 +49,13 @@ class LilliProvider : ContentProvider() {
         return cursor
     }
 
-    fun objectsMap(response: JSONObject?, uri: Uri?): (String) -> Any? {
+    fun objectsMap(response: JSONObject?): (String) -> Any? {
         val f : (String) -> Any? = {
             (k) -> {
                 val value = response?.get(k)
                 when (value) {
-                    LilliContract.Objects.ID -> uri?.getLastPathSegment()
-                    LilliContract.Objects.DATA -> getFile(value as? JSONArray)
+                    LilliContract.Objects.ID -> response?.getString("public_key")
+                    LilliContract.Objects.DATA -> getFile(response)
                     else -> value
                 }
             }
@@ -82,8 +80,8 @@ class LilliProvider : ContentProvider() {
         return request
     }
 
-    fun getFile(neighbors: JSONArray?) : String? {
-        return null
+    fun getFile(response: JSONObject?) : String? {
+        return HttpRequest.get(response?.getString("authoritative_location"))?.body()
     }
 
     fun buildAttributeRequest(uri: Uri?, values: ContentValues?, method: String): HttpRequest {
