@@ -65,6 +65,11 @@ class MyActivity() : Activity() {
         }
     }
 
+    public fun deleteDb(view : View) {
+        backupDb()
+        getApplicationContext()?.deleteDatabase(StatDbHelper.DATABASE_NAME)
+    }
+
     inner class AsyncDownloader : AsyncTask<String, Int, InputStream?>() {
         var startTime : Long = 0
 

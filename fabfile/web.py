@@ -88,8 +88,8 @@ def deploy():
     with cd(code_dir):
         run('git pull')
         # run('source %s/bin/activate' % env_name)
-        with cd(app_dir):
-            sudo('pip install -r requirements.txt')
+        # with cd(app_dir):
+        #     sudo('pip install -r requirements.txt')
 
 @task
 def start():

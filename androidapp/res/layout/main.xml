@@ -5,6 +5,13 @@
     android:layout_height="fill_parent"
     >
 
+    <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/delete_db"
+            android:id="@+id/button1"
+            android:onClick="deleteDb"/>
+
     <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
