@@ -58,7 +58,7 @@ class MyActivity() : Activity() {
         val message = editText?.getText().toString()
 
         val downloader = when (spinnerActivity.currentlySelected) {
-            "Origin" -> OriginDownloader(this)
+            "Origin" -> OriginDownloader()
             "Lilli" -> LilliDownloader()
             else -> null
         }
