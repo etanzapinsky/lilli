@@ -3,6 +3,7 @@ import uuid
 from flask import Flask, make_response, g, request, jsonify
 from flask.ext.sqlalchemy import SQLAlchemy
 
+from functools import update_wrapper
 # development configuration
 DEBUG = True
 SQLALCHEMY_DATABASE_URI = "mysql://root@localhost:3306/lilli"
@@ -93,8 +94,8 @@ verification_methods = {
 }
 
 def requires_auth(mode):
-    def wrap(f):
-        def decorated(*args, **kwargs):
+    def decorator(f):
+        def wrapped_function(*args, **kwargs):
             auth = request.authorization
             verify = verification_methods[mode]
             if not auth or not verify(auth.username, auth.password):
@@ -102,8 +103,8 @@ def requires_auth(mode):
                 response.headers["WWW-Authenticate"] = 'Basic realm="Mordor"'
                 return response
             return f(*args, **kwargs)
-        return decorated
-    return wrap
+        return update_wrapper(wrapped_function, f)
+    return decorator
 
 @app.route("/objects/<key>", methods=["DELETE"])
 @requires_auth("mixed")
