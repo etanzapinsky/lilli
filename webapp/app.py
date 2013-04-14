@@ -106,6 +106,10 @@ def requires_auth(mode):
         return update_wrapper(wrapped_function, f)
     return decorator
 
+@app.route("/")
+def index():
+    return "Hello, and welcome to Lilliput!"
+
 @app.route("/objects/<key>", methods=["DELETE"])
 @requires_auth("mixed")
 def delete(key):
