@@ -53,6 +53,7 @@ def setup():
     sudo('apt-get -y upgrade')
     sudo('DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-server')
     sudo('apt-get -y install python2.7-dev')
+    sudo('apt-get -y install default-jre')
     sudo('apt-get -y install libmysqlclient-dev')
     sudo('apt-get -y install nginx')
     sudo('apt-get -y install uwsgi')
