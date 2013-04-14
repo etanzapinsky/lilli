@@ -88,6 +88,7 @@ def deploy():
             run('git clone git@github.com:etanzapinsky/lilli.git %s' % code_dir)
     with cd(code_dir):
         run('git pull')
+        sudo('service uwsgi restart')
         # run('source %s/bin/activate' % env_name)
         # with cd(app_dir):
         #     sudo('pip install -r requirements.txt')
