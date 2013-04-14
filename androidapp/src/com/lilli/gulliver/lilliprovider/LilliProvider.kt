@@ -14,7 +14,7 @@ import com.lilli.gulliver.lilliprovider.LilliContract
 
 class LilliProvider : ContentProvider() {
     class object {
-        val ENDPOINT = "http://lilli.etanzapinsky.com"
+        val ENDPOINT = "http://test:b4189a15-450e-419e-9b34-042320c72cc8@lilli.etanzapinsky.com"
         val AUTHORITY = "com.lilli.gulliver.lilliprovider"
     }
 
@@ -32,6 +32,8 @@ class LilliProvider : ContentProvider() {
 
         val cursor = MatrixCursor(projection)
         val request = buildRequestFromUri(uri, "GET")
+
+        Log.d(AUTHORITY, request.url().toString())
 
         if (request.ok()) {
             Log.d(AUTHORITY, "Request was OK!")
@@ -67,7 +69,7 @@ class LilliProvider : ContentProvider() {
     fun buildRequestFromUri(uri: Uri?, method: String): HttpRequest {
         val url = Uri.parse(ENDPOINT)
                 ?.buildUpon()
-                ?.appendEncodedPath(uri?.getEncodedPath())
+                ?.path(uri?.getPath())
                 ?.build()
                  .toString()
 
@@ -76,7 +78,7 @@ class LilliProvider : ContentProvider() {
         val password = userinfo?.get(1)
 
         val request = HttpRequest(url, method)
-        request.basic(username, password)
+//        request.basic(username, password)
 
         return request
     }

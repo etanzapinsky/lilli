@@ -4,6 +4,7 @@ import android.content.Context
 import com.lilli.gulliver.lilliprovider.LilliContract
 import java.io.BufferedInputStream
 import java.io.InputStream
+import android.util.Log
 
 class LilliDownloader : Downloader {
     override fun getData(resource: String, context: Context?): InputStream? {
@@ -12,6 +13,8 @@ class LilliDownloader : Downloader {
                 .buildUpon()
                ?.appendPath(resource)
                ?.build()
+
+        Log.d("com.lilli.gulliver.LilliDownloader", uri.toString())
 
         val input_stream = resolver?.openInputStream(uri)
 
