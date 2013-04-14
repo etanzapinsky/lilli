@@ -1,13 +1,8 @@
 package com.lilli.gulliver;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Environment;
-import android.util.Log;
-
-import java.io.File;
 
 /**
  * Created with IntelliJ IDEA.
