@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MyActivity</string>
-    <string name="hello_string">Bro!</string>
+    <string name="app_name">Lilli</string>
     <string name="send">Send</string>
     <string name="uri">URL of Resource</string>
     <string name="download_style">Choose a download method from the spinner below</string>
     <string name="title_activity_display_message">Hi there!</string><string name="delete_db">Delete DB (only local copy)</string>
+    <string-array name="dropdown_options">
+        <item>Origin</item>
+        <item>Lilli</item>
+    </string-array>
 </resources>
