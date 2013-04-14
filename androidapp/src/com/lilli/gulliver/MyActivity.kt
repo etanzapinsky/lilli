@@ -20,6 +20,8 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import android.widget.Spinner
 import android.widget.ArrayAdapter
+import android.content.Context
+import android.net.ConnectivityManager
 
 class MyActivity() : Activity() {
     class object {
@@ -61,7 +63,9 @@ class MyActivity() : Activity() {
             else -> null
         }
 
-        if (downloader?.ready() == true) {
+        val connMgr = getApplicationContext()?.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val networkInfo = connMgr?.getActiveNetworkInfo()
+        if (networkInfo != null && networkInfo.isConnected()) {
             AsyncDownloader(downloader, this, mDbHelper, responseMessage).execute(message)
         }
     }

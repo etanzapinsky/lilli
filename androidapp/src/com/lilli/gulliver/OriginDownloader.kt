@@ -9,25 +9,12 @@
 
 package com.lilli.gulliver
 
-import android.net.ConnectivityManager
 import android.content.Context
 import android.util.Log
 import com.github.kevinsawicki.http.HttpRequest
 import java.io.InputStream
 
-class OriginDownloader(val context : Context) : Downloader {
-
-    public override fun ready() : Boolean {
-        val connMgr = context.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
-        val networkInfo = connMgr?.getActiveNetworkInfo()
-        if (networkInfo != null && networkInfo.isConnected()) {
-            Log.d("Downloader", "Connected!")
-            return true
-        } else {
-            Log.d("Downloader", "Not Connected!")
-            return false
-        }
-    }
+class OriginDownloader() : Downloader {
 
     /**
      * Make sure to close input stream when done!

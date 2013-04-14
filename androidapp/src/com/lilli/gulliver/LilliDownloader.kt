@@ -6,10 +6,6 @@ import java.io.BufferedInputStream
 import java.io.InputStream
 
 class LilliDownloader : Downloader {
-    override fun ready(): Boolean {
-        return true
-    }
-
     override fun getData(resource: String, context: Context?): InputStream? {
         val resolver = context?.getContentResolver()
         val uri = LilliContract.Objects.CONTENT_URI

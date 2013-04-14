@@ -14,7 +14,5 @@ import java.io.InputStream
 
 trait Downloader {
 
-    fun ready() : Boolean
-
     fun getData(resource : String, context : Context?) : InputStream?
 }
