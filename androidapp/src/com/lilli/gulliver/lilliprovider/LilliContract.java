@@ -1,4 +1,4 @@
-package com.lilli.gulliver.provider;
+package com.lilli.gulliver.lilliprovider;
 
 import android.net.Uri;
 
@@ -10,6 +10,6 @@ public class LilliContract {
         public static final String ID = "_ID";
         public static final String AUTHORITATIVE_LOCATION = "authoritative_location";
         public static final String DATA = "_data";
-        public static final Uri CONTENT_URI = Uri.parse("content://com.lilli.gulliver.provider/objects");
+        public static final Uri CONTENT_URI = Uri.parse("content://com.lilli.gulliver.lilliprovider/objects");
     }
 }

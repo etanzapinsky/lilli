@@ -10,12 +10,12 @@ import com.github.kevinsawicki.http.HttpRequest
 import android.content.UriMatcher
 import org.json.JSONObject
 import android.util.Log
-import com.lilli.gulliver.provider.LilliContract.Objects
+import com.lilli.gulliver.lilliprovider.LilliContract
 
 class LilliProvider : ContentProvider() {
     class object {
         val ENDPOINT = "http://lilli.etanzapinsky.com"
-        val AUTHORITY = "com.lilli.gulliver.provider"
+        val AUTHORITY = "com.lilli.gulliver.lilliprovider"
     }
 
     val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH)
@@ -100,8 +100,8 @@ class LilliProvider : ContentProvider() {
 
     public override fun getType(uri: Uri?): String? {
         return when (sUriMatcher.match(uri)) {
-            LilliContract.OBJECTS -> "vnd.android.cursor.dir/vnd.com.lilli.gulliver.provider.objects"
-            LilliContract.OBJECTS_ID -> "vnd.android.cursor.item/vnd.com.lilli.gulliver.provider.objects"
+            LilliContract.OBJECTS -> "vnd.android.cursor.dir/vnd.com.lilli.gulliver.lilliprovider.objects"
+            LilliContract.OBJECTS_ID -> "vnd.android.cursor.item/vnd.com.lilli.gulliver.lilliprovider.objects"
             else -> null
         }
     }

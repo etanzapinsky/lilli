@@ -1,7 +1,7 @@
 package com.lilli.gulliver
 
 import android.content.Context
-import com.lilli.gulliver.provider.LilliContract
+import com.lilli.gulliver.lilliprovider.LilliContract
 import java.io.BufferedInputStream
 import java.io.InputStream
 
