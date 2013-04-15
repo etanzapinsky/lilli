@@ -108,7 +108,7 @@ def requires_auth(mode):
 
 @app.route("/")
 def index():
-    return "Hello, and welcome to Lilliput!"
+    return request.remote_addr
 
 @app.route("/objects/<key>", methods=["DELETE"])
 @requires_auth("mixed")
