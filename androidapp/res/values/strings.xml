@@ -8,5 +8,6 @@
     <string-array name="dropdown_options">
         <item>Origin</item>
         <item>Lilli</item>
+        <item>BitTorrent</item>
     </string-array>
 </resources>

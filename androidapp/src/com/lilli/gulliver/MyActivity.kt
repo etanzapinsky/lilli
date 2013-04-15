@@ -60,6 +60,7 @@ class MyActivity() : Activity() {
         val downloader = when (spinnerActivity.currentlySelected) {
             "Origin" -> OriginDownloader()
             "Lilli" -> LilliDownloader()
+            "BitTorrent" -> TorrentDownloader()
             else -> null
         }
 
