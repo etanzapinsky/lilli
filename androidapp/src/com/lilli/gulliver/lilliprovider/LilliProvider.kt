@@ -108,7 +108,7 @@ class LilliProvider : ContentProvider() {
 
     fun getIdFromResponse(i: Int, response: JSONObject?): String? {
         return when (i) {
-            LilliContract.OBJECTS -> response?.getString("public_key")
+            LilliContract.OBJECTS, LilliContract.OBJECTS_ID -> response?.getString("public_key")
             else -> null
         }
     }
