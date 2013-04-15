@@ -23,7 +23,6 @@ class AsyncDownloader(val downloader : Downloader?, val context : Context?, val 
 
     protected override fun onPostExecute(result : InputStream?) {
         val message = if (result != null) {
-            val db = dbHelper?.getWritableDatabase()
             val file = File(context?.getCacheDir(), "temp")
             file.writeBytes(result.readBytes())
 
@@ -34,6 +33,8 @@ class AsyncDownloader(val downloader : Downloader?, val context : Context?, val 
             values.put(StatContract.StatEntry.COLUMN_NAME_SIZE, file.length());
             values.put(StatContract.StatEntry.COLUMN_NAME_TIME, elapsed);
             values.put(StatContract.StatEntry.COLUMN_NAME_METHOD, "normal");
+
+            val db = dbHelper?.getWritableDatabase()
 
             if (db != null) {
                 db.insert(StatContract.StatEntry.TABLE_NAME, null, values)
