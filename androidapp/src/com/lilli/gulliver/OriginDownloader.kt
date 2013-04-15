@@ -10,7 +10,6 @@
 package com.lilli.gulliver
 
 import android.content.Context
-import android.util.Log
 import com.github.kevinsawicki.http.HttpRequest
 import java.io.InputStream
 

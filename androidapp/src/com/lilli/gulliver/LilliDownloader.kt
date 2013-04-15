@@ -4,7 +4,6 @@ import android.content.Context
 import com.lilli.gulliver.lilliprovider.LilliContract
 import java.io.BufferedInputStream
 import java.io.InputStream
-import android.util.Log
 
 class LilliDownloader : Downloader {
     val username = "00844321-16f0-4f87-a49b-94d42c5b693b"

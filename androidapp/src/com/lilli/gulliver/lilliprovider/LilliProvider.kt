@@ -9,10 +9,7 @@ import android.database.MatrixCursor
 import com.github.kevinsawicki.http.HttpRequest
 import android.content.UriMatcher
 import org.json.JSONObject
-import android.util.Log
-import com.lilli.gulliver.lilliprovider.LilliContract
 import android.content.Context
-import java.io.File
 
 class LilliProvider : ContentProvider() {
     class object {
