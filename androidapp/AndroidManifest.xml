@@ -13,7 +13,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <provider android:authorities="com.lilli.gulliver.lilliprovider" android:name=".provider.LilliProvider">
+        <provider android:authorities="com.lilli.gulliver.lilliprovider" android:name=".lilliprovider.LilliProvider">
         </provider>
     </application>
 </manifest>

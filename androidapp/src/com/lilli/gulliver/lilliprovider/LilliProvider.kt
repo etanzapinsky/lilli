@@ -1,4 +1,4 @@
-package com.lilli.gulliver.provider
+package com.lilli.gulliver.lilliprovider
 
 import android.content.ContentProvider
 import android.net.Uri
@@ -11,10 +11,12 @@ import android.content.UriMatcher
 import org.json.JSONObject
 import android.util.Log
 import com.lilli.gulliver.lilliprovider.LilliContract
+import android.content.Context
+import java.io.File
 
 class LilliProvider : ContentProvider() {
     class object {
-        val ENDPOINT = "http://test:b4189a15-450e-419e-9b34-042320c72cc8@lilli.etanzapinsky.com"
+        val ENDPOINT = "http://lilli.etanzapinsky.com"
         val AUTHORITY = "com.lilli.gulliver.lilliprovider"
     }
 
@@ -22,29 +24,22 @@ class LilliProvider : ContentProvider() {
 
     public override fun onCreate(): Boolean {
         sUriMatcher.addURI(AUTHORITY, "objects", LilliContract.OBJECTS)
-        sUriMatcher.addURI(AUTHORITY, "objects/#", LilliContract.OBJECTS_ID)
+        sUriMatcher.addURI(AUTHORITY, "objects/*", LilliContract.OBJECTS_ID)
 
         return true
     }
 
     public override fun query(uri: Uri?, projection: Array<out String>?, selection: String?, selectionArgs: Array<out String>?, sortOrder: String?): Cursor? {
-        Log.d(AUTHORITY, uri.toString())
-
         val cursor = MatrixCursor(projection)
         val request = buildRequestFromUri(uri, "GET")
 
-        Log.d(AUTHORITY, request.url().toString())
-
         if (request.ok()) {
-            Log.d(AUTHORITY, "Request was OK!")
             val response = JSONObject(request.body())
 
             val row = when (sUriMatcher.match(uri)) {
                 LilliContract.OBJECTS_ID -> projection?.map(objectsMap(response))
                 else -> projection?.map { null }
             }
-
-            Log.d(AUTHORITY, "Matcher was: %d".format(sUriMatcher.match(uri)))
 
             cursor.addRow(row)
         }
@@ -53,17 +48,13 @@ class LilliProvider : ContentProvider() {
     }
 
     fun objectsMap(response: JSONObject?): (String) -> Any? {
-        val f : (String) -> Any? = {
-            (k) -> {
-                val value = response?.get(k)
-                when (value) {
-                    LilliContract.Objects.ID -> response?.getString("public_key")
-                    LilliContract.Objects.DATA -> getFile(response)
-                    else -> value
-                }
+        return {
+            (k) -> when (k) {
+                LilliContract.Objects.ID -> getIdFromResponse(LilliContract.OBJECTS_ID, response)
+                LilliContract.Objects.DATA -> getFile(response)
+                else -> response?.get(k)
             }
         }
-        return f
     }
 
     fun buildRequestFromUri(uri: Uri?, method: String): HttpRequest {
@@ -73,18 +64,24 @@ class LilliProvider : ContentProvider() {
                 ?.build()
                  .toString()
 
-        val userinfo = uri?.getUserInfo()?.split(":")
-        val username = userinfo?.get(0)
-        val password = userinfo?.get(1)
+        val username = uri?.getQueryParameter(LilliContract.USERNAME)
+        val password = uri?.getQueryParameter(LilliContract.PASSWORD)
 
         val request = HttpRequest(url, method)
-//        request.basic(username, password)
+        request.basic(username, password)
 
         return request
     }
 
     fun getFile(response: JSONObject?) : String? {
-        return HttpRequest.get(response?.getString(LilliContract.Objects.AUTHORITATIVE_LOCATION))?.body()
+        val context = getContext()
+        val authoritative_location = response?.getString(LilliContract.Objects.AUTHORITATIVE_LOCATION)
+        val filename = "%d.tmp".format(authoritative_location?.hashCode())
+        val fos = context?.openFileOutput(filename, Context.MODE_PRIVATE)
+
+        HttpRequest.get(authoritative_location)?.receive(fos)
+
+        return context?.getFileStreamPath(filename)?.getPath()
     }
 
     fun buildAttributeRequest(uri: Uri?, values: ContentValues?, method: String): HttpRequest {
@@ -109,8 +106,12 @@ class LilliProvider : ContentProvider() {
     }
 
     fun deriveIdFromUriAndResponse(uri: Uri?, response: JSONObject): String? {
-        return when (sUriMatcher.match(uri)) {
-            LilliContract.OBJECTS -> response.getString("public_key")
+        return getIdFromResponse(sUriMatcher.match(uri), response)
+    }
+
+    fun getIdFromResponse(i: Int, response: JSONObject?): String? {
+        return when (i) {
+            LilliContract.OBJECTS -> response?.getString("public_key")
             else -> null
         }
     }

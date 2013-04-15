@@ -6,6 +6,9 @@ public class LilliContract {
     public static final int OBJECTS_ID = 1;
     public static final int OBJECTS = 2;
 
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
+
     public static final class Objects {
         public static final String ID = "_ID";
         public static final String AUTHORITATIVE_LOCATION = "authoritative_location";
