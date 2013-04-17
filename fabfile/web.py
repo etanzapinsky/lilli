@@ -52,11 +52,10 @@ def setup():
     sudo('add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable')
     sudo('apt-get update')
     sudo('apt-get -y upgrade')
-    # sudo('DEBIAN_FRONTEND=noninteractive apt-get -y install mysql-server')
     sudo('apt-get -y install python2.7-dev')
     sudo('apt-get -y install default-jre')
-    # sudo('apt-get -y install libmysqlclient-dev')
     sudo('apt-get -y install postgis')
+    sudo('apt-get -y install postgresql-server-dev-9.1')
     sudo('apt-get -y install nginx')
     sudo('apt-get -y install uwsgi')
     sudo('apt-get -y install uwsgi-plugin-python')
@@ -71,9 +70,10 @@ def setup():
         sudo('cp uwsgi.conf /etc/init/uwsgi.conf')
     sudo('service nginx restart')
     sudo('su - postgres -c "createuser ubuntu -s"')
+    sudo('createuser root -s')
     run('createdb lilli')
-    # sudo('service mysql restart')
-    # sudo('mysql -uroot -e "CREATE DATABASE lilli"')
+    # note: insert line which in /etc/postgresql/9.1/main/pg_hba.conf changes
+    # all the local connections from md5 or password to trust
     sudo('apt-get -y install python-pip')
     sudo('pip install distribute --upgrade')
     # sudo('pip install virtualenv')
@@ -84,6 +84,7 @@ def setup():
         sudo('pip install -r requirements.txt')
         sudo('python -c "from app import db; db.create_all()"')
     sudo('service uwsgi restart')
+    sudo('/etc/init.d/postgresql restart')
 
 @task
 def deploy():
