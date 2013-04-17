@@ -30,7 +30,8 @@ class TorrentDownloader : Downloader {
         val input_stream = resolver?.openInputStream(uri)
 
         if (input_stream != null) {
-            Log.d(AUTHORITY, "made it here!")
+            resolver?.insert(uri, null)
+            Log.d(AUTHORITY, "successfully seeding")
             return BufferedInputStream(input_stream)
         }
 

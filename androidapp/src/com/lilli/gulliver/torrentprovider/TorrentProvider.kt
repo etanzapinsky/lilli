@@ -15,6 +15,7 @@ import java.io.File
 import java.net.NetworkInterface
 import com.github.kevinsawicki.http.HttpRequest
 import android.os.Environment
+import java.util.concurrent.ConcurrentHashMap
 
 class TorrentProvider : ContentProvider() {
     class object {
@@ -23,6 +24,7 @@ class TorrentProvider : ContentProvider() {
     }
 
     val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH)
+    var seedingClients = ConcurrentHashMap<String, Client>()
 
     public override fun onCreate(): Boolean {
         sUriMatcher.addURI(AUTHORITY, "*", TorrentContract.OBJECT_NAME)
@@ -37,10 +39,10 @@ class TorrentProvider : ContentProvider() {
         val torrentPath = uri?.getPath()
         if (torrentPath != null) {
             val torrentFile = File(torrentPath)
-            var client = Client(getLocalIpAddress(),
+            val client = Client(getLocalIpAddress(),
                                 SharedTorrent.fromFile(torrentFile, this.getContext()?.getFilesDir()))
             Log.d(AUTHORITY, getLocalIpAddress().toString())
-            // when you download a file, you're automatically going to start seeding it
+            // when you download a file, you're not automatically going to start seeding it
             client.download()
             client.waitForCompletion()
             // when we're here file has finished downloading
@@ -65,16 +67,32 @@ class TorrentProvider : ContentProvider() {
 
     public override fun getType(uri: Uri?): String? {
         return when (sUriMatcher.match(uri)) {
-            TorrentContract.OBJECT_NAME -> "vnd.android.cursor.item/vnd.com.lilli.gulliver.torrentprovider.objects"
+            TorrentContract.OBJECT_NAME -> "vnd.android.cursor.item/vnd.com.lilli.gulliver.torrentprovider.torrent"
             else -> null
         }
     }
 
     public override fun insert(uri: Uri?, values: ContentValues?): Uri? {
+        val torrentPath = uri?.getPath()
+        if (torrentPath != null) {
+            val torrentFile = File(torrentPath)
+            val client = Client(getLocalIpAddress(),
+                    SharedTorrent.fromFile(torrentFile, this.getContext()?.getFilesDir()))
+            seedingClients?.put(torrentPath, client)
+            client?.share()
+            return uri
+        }
         return null
     }
 
     public override fun delete(uri: Uri?, selection: String?, selectionArgs: Array<out String>?): Int {
+        val torrentPath = uri?.getPath()
+        if (torrentPath != null) {
+            val torrentFile = File(torrentPath)
+            val client = seedingClients?.get(torrentPath)
+            client?.stop()
+            return 1
+        }
         return 0
     }
 
