@@ -13,7 +13,7 @@ import android.content.Context
 
 class LilliProvider : ContentProvider() {
     class object {
-        private val ENDPOINT = "http://lilli.etanzapinsky.com"
+        val ENDPOINT = "http://lilli.etanzapinsky.com"
         private val AUTHORITY = "com.lilli.gulliver.lilliprovider"
     }
 
