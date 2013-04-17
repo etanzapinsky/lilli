@@ -22,16 +22,19 @@ import android.widget.Spinner
 import android.widget.ArrayAdapter
 import android.content.Context
 import android.net.ConnectivityManager
+import android.app.PendingIntent
+import android.content.Intent
+import android.location.LocationManager
 
 class MyActivity() : Activity() {
     class object {
-        public val EXTRA_MESSAGE: String = "com.lilli.gulliver.MESSAGE"
+        private val LOCATION_ACTION = "com.lilli.gulliver.LOCATION_UPDATE_RECEIVED"
     }
 
-    var imageView : ImageView? = null
-    var responseMessage : TextView? = null
-    var mDbHelper : StatDbHelper? = null
-    val spinnerActivity = SpinnerActivity()
+    private var imageView : ImageView? = null
+    private var responseMessage : TextView? = null
+    private var mDbHelper : StatDbHelper? = null
+    private val spinnerActivity = SpinnerActivity()
 
     protected override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +49,12 @@ class MyActivity() : Activity() {
         imageView = findViewById(R.id.received_image) as? ImageView
         responseMessage = findViewById(R.id.response_text) as? TextView
         mDbHelper = StatDbHelper(this)
+
+        val intent = Intent(LOCATION_ACTION)
+        val pi = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val lm = getSystemService(Context.LOCATION_SERVICE) as? LocationManager
+
+        lm?.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0.0, pi)
     }
 
     protected override fun onStop() {

@@ -13,15 +13,16 @@ import android.content.Context
 
 class LilliProvider : ContentProvider() {
     class object {
-        val ENDPOINT = "http://lilli.etanzapinsky.com"
-        val AUTHORITY = "com.lilli.gulliver.lilliprovider"
+        private val ENDPOINT = "http://lilli.etanzapinsky.com"
+        private val AUTHORITY = "com.lilli.gulliver.lilliprovider"
     }
 
-    val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH)
+    private val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH)
 
     public override fun onCreate(): Boolean {
         sUriMatcher.addURI(AUTHORITY, "objects", LilliContract.OBJECTS)
         sUriMatcher.addURI(AUTHORITY, "objects/*", LilliContract.OBJECTS_ID)
+        sUriMatcher.addURI(AUTHORITY, "edges/*", LilliContract.EDGES_ID)
 
         return true
     }
@@ -44,7 +45,7 @@ class LilliProvider : ContentProvider() {
         return cursor
     }
 
-    fun objectsMap(response: JSONObject?): (String) -> Any? {
+    private fun objectsMap(response: JSONObject?): (String) -> Any? {
         return {
             (k) -> when (k) {
                 LilliContract.Objects.ID -> getIdFromResponse(LilliContract.OBJECTS_ID, response)
@@ -54,7 +55,7 @@ class LilliProvider : ContentProvider() {
         }
     }
 
-    fun buildRequestFromUri(uri: Uri?, method: String): HttpRequest {
+    private fun buildRequestFromUri(uri: Uri?, method: String): HttpRequest {
         val url = Uri.parse(ENDPOINT)
                 ?.buildUpon()
                 ?.path(uri?.getPath())
@@ -70,7 +71,7 @@ class LilliProvider : ContentProvider() {
         return request
     }
 
-    fun getFile(response: JSONObject?) : String? {
+    private fun getFile(response: JSONObject?) : String? {
         val context = getContext()
         val authoritative_location = response?.getString(LilliContract.Objects.AUTHORITATIVE_LOCATION)
         val filename = "%d.tmp".format(authoritative_location?.hashCode())
@@ -81,7 +82,7 @@ class LilliProvider : ContentProvider() {
         return context?.getFileStreamPath(filename)?.getPath()
     }
 
-    fun buildAttributeRequest(uri: Uri?, values: ContentValues?, method: String): HttpRequest {
+    private fun buildAttributeRequest(uri: Uri?, values: ContentValues?, method: String): HttpRequest {
         val request = buildRequestFromUri(uri, method)
         val output = JSONObject()
 
@@ -98,15 +99,16 @@ class LilliProvider : ContentProvider() {
         return when (sUriMatcher.match(uri)) {
             LilliContract.OBJECTS -> "vnd.android.cursor.dir/vnd.com.lilli.gulliver.lilliprovider.objects"
             LilliContract.OBJECTS_ID -> "vnd.android.cursor.item/vnd.com.lilli.gulliver.lilliprovider.objects"
+            LilliContract.EDGES_ID -> "vnd.android.cursor.item/vnd.com.lilli.gulliver.lilliprovider.edges"
             else -> null
         }
     }
 
-    fun deriveIdFromUriAndResponse(uri: Uri?, response: JSONObject): String? {
+    private fun deriveIdFromUriAndResponse(uri: Uri?, response: JSONObject): String? {
         return getIdFromResponse(sUriMatcher.match(uri), response)
     }
 
-    fun getIdFromResponse(i: Int, response: JSONObject?): String? {
+    private fun getIdFromResponse(i: Int, response: JSONObject?): String? {
         return when (i) {
             LilliContract.OBJECTS, LilliContract.OBJECTS_ID -> response?.getString("public_key")
             else -> null

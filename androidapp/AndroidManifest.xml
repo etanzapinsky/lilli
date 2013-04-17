@@ -17,5 +17,10 @@
         </provider>
         <provider android:authorities="com.lilli.gulliver.torrentprovider" android:name=".torrentprovider.TorrentProvider">
         </provider>
+        <receiver android:name=".LocationReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="com.lilli.gulliver.LOCATION_UPDATE_RECEIVED"/>
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

@@ -13,6 +13,5 @@ import android.content.Context
 import java.io.InputStream
 
 trait Downloader {
-
     fun getData(resource : String, context : Context?) : InputStream?
 }
