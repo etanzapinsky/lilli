@@ -31,7 +31,6 @@ class MyActivity() : Activity() {
         private val LOCATION_ACTION = "com.lilli.gulliver.LOCATION_UPDATE_RECEIVED"
     }
 
-    private var imageView : ImageView? = null
     private var responseMessage : TextView? = null
     private var mDbHelper : StatDbHelper? = null
     private val spinnerActivity = SpinnerActivity()
@@ -46,7 +45,6 @@ class MyActivity() : Activity() {
         spinner?.setOnItemSelectedListener(spinnerActivity)
         spinner?.setAdapter(adapter)
 
-        imageView = findViewById(R.id.received_image) as? ImageView
         responseMessage = findViewById(R.id.response_text) as? TextView
         mDbHelper = StatDbHelper(this)
 
