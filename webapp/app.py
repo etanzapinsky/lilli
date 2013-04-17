@@ -6,7 +6,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from functools import update_wrapper
 # development configuration
 DEBUG = True
-SQLALCHEMY_DATABASE_URI = "mysql://root@localhost:3306/lilli"
+SQLALCHEMY_DATABASE_URI = "postgres://localhost/lilli"
 
 app = Flask(__name__)
 app.config.from_object(__name__)
