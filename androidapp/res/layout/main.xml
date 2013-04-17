@@ -1,64 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" >
+
+    <TextView
+            android:id="@+id/textView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/download_style" android:layout_alignLeft="@+id/url_string"/>
+
+    <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView"/>
+
+    <EditText
+            android:id="@+id/url_string"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textUri"
+            android:layout_below="@id/spinner"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/button"
+            android:hint="@string/text_hint"/>
+
+    <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/send"
+            android:onClick="requestURL"
+            android:layout_below="@id/spinner"
+            android:layout_alignParentRight="true"/>
+
+    <TextView
+            android:id="@+id/response_text"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/url_string"/>
 
     <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/delete_db"
             android:id="@+id/button1"
-            android:onClick="deleteDb"/>
-
-    <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/download_style"
-            android:id="@+id/textView"/>
-
-    <Spinner
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/spinner"/>
-
-    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="54dp">
-
-        <EditText
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:id="@+id/url_string"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:layout_gravity="left|center_vertical"/>
-
-        <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/send"
-                android:id="@+id/button"
-                android:layout_toRightOf="@+id/url_string"
-                android:layout_alignTop="@+id/url_string"
-                android:layout_gravity="right|center_vertical"
-                android:onClick="requestURL" />
-
-    </LinearLayout>
-
-    <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/response_text"/>
-
-    <ImageView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/received_image"
-            android:layout_weight="0.98"/>
-
-</LinearLayout>
+            android:onClick="deleteDb"
+            android:layout_alignParentBottom="true"/>
+</RelativeLayout>
 
