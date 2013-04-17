@@ -24,7 +24,7 @@
             android:inputType="textUri"
             android:layout_below="@id/spinner"
             android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@id/button"
+            android:layout_toLeftOf="@+id/button"
             android:hint="@string/text_hint"/>
 
     <Button
