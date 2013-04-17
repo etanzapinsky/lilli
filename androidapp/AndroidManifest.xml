@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application android:label="@string/app_name" android:icon="@drawable/icon">
         <activity android:name=".MyActivity">
             <intent-filter>
@@ -20,6 +22,11 @@
         <receiver android:name=".LocationReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="com.lilli.gulliver.LOCATION_UPDATE_RECEIVED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".ConnectivityReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
     </application>
