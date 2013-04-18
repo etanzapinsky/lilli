@@ -21,17 +21,17 @@ class AsyncLocationReceiver(val context : Context?, val intent : Intent?, val pe
         val password = credentials.get(LilliContract.PASSWORD)
 
         val uri = LilliContract.Edges.CONTENT_URI
-                .buildUpon()
-        ?.appendQueryParameter(LilliContract.USERNAME, username)
-        ?.appendQueryParameter(LilliContract.PASSWORD, password)
-        ?.build()
+                 .buildUpon()
+                ?.path(username)
+                ?.appendQueryParameter(LilliContract.USERNAME, username)
+                ?.appendQueryParameter(LilliContract.PASSWORD, password)
+                ?.build()
 
         val values = ContentValues()
-        values.put(LilliContract.Edges.LOCATION, "%s,%s".format(latitude, longitude))
+        values.put(LilliContract.Edges.LOCATION, "POINT(%s, %s)".format(longitude, latitude))
 
-        Log.d("com.lilli.gulliver", "%s,%s".format(latitude, longitude))
+        resolver?.update(uri, values, null, null)
 
-        //        resolver?.update(uri, values, null, null)
         pending?.finish()
     }
 }

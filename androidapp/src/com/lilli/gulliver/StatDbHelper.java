@@ -4,16 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Etan
- * Date: 4/11/13
- * Time: 10:58 AM
- * To change this template use File | Settings | File Templates.
- */
 public class StatDbHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final String DBDIR = "lilli";
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "stats.db";
     private static final String TEXT_TYPE = " TEXT";
@@ -32,26 +24,18 @@ public class StatDbHelper extends SQLiteOpenHelper {
 
     public StatDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-//        @Override
-//        public File getDatabasePath(String name) {
-//            File dbdir = new File(Environment.getExternalStoragePublicDirectory(Environment.MEDIA_SHARED), DBDIR);
-//            if (!dbdir.mkdirs()) {
-//                Log.e("STATS_DB_HELPER", "Directory not created");
-//            }
-//            File file = new File(dbdir, name);
-//            Log.d("STATS_DB_HELPER", file.getAbsolutePath());
-//            return file;
-//        }
-
     }
+
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_STATS);
     }
+
+    // Very simple upgrade policy -> delete everything and start redownloading info
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Very simple upgrade policy -> delete everything and start redownloading info
         db.execSQL(SQL_DELETE_STATS);
         onCreate(db);
     }
+
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
     }
