@@ -2,13 +2,18 @@ import uuid
 
 from flask import Flask, make_response, g, request, jsonify
 from flask.ext.sqlalchemy import SQLAlchemy
-from geoalchemy import GeometryColumn, GeometryDDL, Point
-from geoalchemy.postgis import PGComparator
+from sqlalchemy import and_
+from geoalchemy2 import Geometry
 
 from functools import update_wrapper
 # development configuration
 DEBUG = True
 SQLALCHEMY_DATABASE_URI = "postgres://localhost/lilli"
+# 50 meters, ~ 160 ft -> even though range is ~200 ft, we dont want the user to
+# have walked out of range before we could connect and waste time
+WIFI_DIRECT_RANGE = 50
+WIFI_DIRECT_PEER_MAX = 5 # to be tweeked appropriately
+TOTAL_PEER_MAX = 10 # to be tweeked appropriately
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -40,7 +45,7 @@ class Edge(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     ip = db.Column(db.String(length=255))
-    geom = GeometryColumn(Point(), comparator=PGComparator)
+    geom = db.Column(Geometry('POINT'))
     public_key = db.Column(db.String(length=255))
     shared_secret = db.Column(db.String(length=255))
     application_id = db.Column(db.Integer, db.ForeignKey("applications.id"))
@@ -51,8 +56,6 @@ class Edge(db.Model):
     def __init__(self, public_key, shared_secret):
         self.public_key = public_key
         self.shared_secret = shared_secret
-
-GeometryDDL(Edge.__table__)
 
 class Object(db.Model):
     __tablename__ = "objects"
@@ -144,7 +147,14 @@ def get(key):
         return []
 
     def neighbors_using_gps():
-        return []
+        wifidirect_neighbors = Edge.query \
+            .filter(and_(Edge.geom.ST_DWithin(g.edge.geom, WIFI_DIRECT_RANGE),
+                         Edge.id != g.edge.id)) \
+            .order_by(Edge.geom.distance_centroid(g.edge.geom.ST_AsText())) \
+            .limit(WIFI_DIRECT_PEER_MAX).all()
+        return [{'ip': n.ip,
+                 'public_key': n.public_key,
+                 'connect_with': 'wifi_direct'} for n in wifidirect_neighbors]
 
     algorithm = {'ip': neighbors_using_ip,
                  'gps': neighbors_using_gps}
