@@ -140,7 +140,15 @@ def get(key):
     if obj == None:
         abort(404)
 
-    neighbors = [] # Add magic here later
+    def neighbors_using_ip():
+        return []
+
+    def neighbors_using_gps():
+        return []
+
+    algorithm = {'ip': neighbors_using_ip,
+                 'gps': neighbors_using_gps}
+    neighbors = algorithm[request.json["algorithm"]]()
 
     return jsonify(neighbors=neighbors, authoritative_location=obj.authoritative_location)
 
