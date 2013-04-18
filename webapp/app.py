@@ -2,6 +2,8 @@ import uuid
 
 from flask import Flask, make_response, g, request, jsonify
 from flask.ext.sqlalchemy import SQLAlchemy
+from geoalchemy import GeometryColumn, GeometryDDL, Point
+from geoalchemy.postgis import PGComparator
 
 from functools import update_wrapper
 # development configuration
@@ -38,7 +40,7 @@ class Edge(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     ip = db.Column(db.String(length=255))
-    location = db.Column(db.String(length=255))
+    geom = GeometryColumn(Point(), comparator=PGComparator)
     public_key = db.Column(db.String(length=255))
     shared_secret = db.Column(db.String(length=255))
     application_id = db.Column(db.Integer, db.ForeignKey("applications.id"))
@@ -49,6 +51,8 @@ class Edge(db.Model):
     def __init__(self, public_key, shared_secret):
         self.public_key = public_key
         self.shared_secret = shared_secret
+
+GeometryDDL(Edge.__table__)
 
 class Object(db.Model):
     __tablename__ = "objects"
