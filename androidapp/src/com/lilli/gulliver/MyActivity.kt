@@ -24,6 +24,8 @@ import android.net.ConnectivityManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.location.LocationManager
+import android.view.Menu
+import android.view.MenuItem
 
 class MyActivity() : Activity() {
     class object {
@@ -54,6 +56,12 @@ class MyActivity() : Activity() {
         lm?.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 30000, 0.0, pi)
     }
 
+    public override fun onCreateOptionsMenu(menu : Menu?): Boolean {
+        val inflater = getMenuInflater()
+        inflater?.inflate(R.menu.main_activity, menu)
+        return true
+    }
+
     protected override fun onStop() {
         super.onStop()
         backupDb()
@@ -77,7 +85,7 @@ class MyActivity() : Activity() {
         }
     }
 
-    public fun deleteDb(view : View) {
+    public fun deleteDb(item : MenuItem) {
         backupDb()
         this.deleteDatabase(StatDbHelper.DATABASE_NAME)
     }

@@ -41,13 +41,5 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/url_string"/>
-
-    <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/delete_db"
-            android:id="@+id/button1"
-            android:onClick="deleteDb"
-            android:layout_alignParentBottom="true"/>
 </RelativeLayout>
 
