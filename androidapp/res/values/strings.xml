@@ -4,6 +4,9 @@
     <string name="send">Send</string>
     <string name="download_style">Choose a download method from the spinner below</string>
     <string name="trash">Trash</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="delete_title">Delete the local database?</string>
     <string name="text_hint">Enter a resource…</string>
     <string-array name="dropdown_options">
         <item>Origin</item>

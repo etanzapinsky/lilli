@@ -26,6 +26,9 @@ import android.content.Intent
 import android.location.LocationManager
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.AdapterView
+import android.widget.Adapter
 
 class MyActivity() : Activity() {
     class object {
@@ -34,7 +37,7 @@ class MyActivity() : Activity() {
 
     private var responseMessage : TextView? = null
     private var mDbHelper : StatDbHelper? = null
-    private val spinnerActivity = SpinnerActivity()
+    private var currentlySelected : String? = null
 
     protected override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +46,15 @@ class MyActivity() : Activity() {
         val spinner = findViewById(R.id.spinner) as? Spinner
         val adapter = ArrayAdapter.createFromResource(this, R.array.dropdown_options, android.R.layout.simple_spinner_item)
         adapter?.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner?.setOnItemSelectedListener(spinnerActivity)
+        spinner?.setOnItemSelectedListener(object : OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<out Adapter?>?) {
+                return
+            }
+
+            override fun onItemSelected(parent: AdapterView<out Adapter?>?, view: View?, position: Int, id: Long) {
+                currentlySelected = parent?.getItemAtPosition(position).toString()
+            }
+        })
         spinner?.setAdapter(adapter)
 
         responseMessage = findViewById(R.id.response_text) as? TextView
@@ -71,7 +82,7 @@ class MyActivity() : Activity() {
         val editText = findViewById(R.id.url_string) as? EditText
         val message = editText?.getText().toString()
 
-        val downloader = when (spinnerActivity.currentlySelected) {
+        val downloader = when (currentlySelected) {
             "Origin" -> OriginDownloader()
             "Lilli" -> LilliDownloader()
             "BitTorrent" -> TorrentDownloader()
@@ -85,12 +96,11 @@ class MyActivity() : Activity() {
         }
     }
 
-    public fun deleteDb(item : MenuItem) {
-        backupDb()
-        this.deleteDatabase(StatDbHelper.DATABASE_NAME)
+    public fun deleteDb(item : MenuItem?) {
+        TrashDialogFragment().show(getFragmentManager(), "trash")
     }
 
-    protected fun backupDb() {
+    public fun backupDb() {
         try {
             val sd = Environment.getExternalStorageDirectory()
 
