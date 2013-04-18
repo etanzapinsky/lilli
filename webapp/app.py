@@ -165,7 +165,7 @@ def update_edge(key):
         abort(403)
 
     g.edge.ip = request.remote_addr
-    g.edge.location = request.json["location"]
+    g.edge.geom = request.json["location"]
 
     db.session.commit()
 
