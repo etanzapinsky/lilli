@@ -11,54 +11,62 @@ import org.json.JSONObject
 
 class LilliDownloader : Downloader {
     class object {
-        val APPNAME = "gulliver"
-        val PUBLICKEY = "10ea41f4-a80c-4ce2-95a2-1e04ca03ea60"
-        fun id(context : Context?) : HashMap<String, String>? {
-            val username = context?.getSharedPreferences(LilliContract.USERNAME, Context.MODE_PRIVATE)
-            val password = context?.getSharedPreferences(LilliContract.PASSWORD, Context.MODE_PRIVATE)
-            val u = username?.getString(LilliContract.USERNAME, null)
-            val p = password?.getString(LilliContract.PASSWORD, null)
-            val hm = HashMap<String, String>()
-            if (u == null || p == null) {
+        private val APPNAME = "gulliver"
+        private val PUBLICKEY = "10ea41f4-a80c-4ce2-95a2-1e04ca03ea60"
+        private val CREDENTIALS = "credentials"
+
+        fun getCredentials(context : Context?) : Map<String, String?> {
+            val credentials = context?.getSharedPreferences(CREDENTIALS, Context.MODE_PRIVATE)
+
+            val username = credentials?.getString(LilliContract.USERNAME, null)
+            val password = credentials?.getString(LilliContract.PASSWORD, null)
+            val auth = hashMapOf(Pair(LilliContract.USERNAME, username), Pair(LilliContract.PASSWORD, password))
+
+            if (username == null || password == null) {
                 val url = LilliProvider.ENDPOINT + "/edges"
-                val request = HttpRequest(url, "POST")
-                request.basic(APPNAME, PUBLICKEY)
-                if (request.ok()) {
-                    val response = JSONObject(request.body())
+
+                val request = HttpRequest.post(url)
+                request?.basic(APPNAME, PUBLICKEY)
+
+                if (request?.ok() == true) {
+                    val response = JSONObject(request?.body())
+
                     val user = response.getString("public_key")
                     val pass = response.getString("shared_secret")
-                    val uEditor = username?.edit()
-                    val pEditor = password?.edit()
+
+                    val editor = credentials?.edit()
+
                     if (user != null) {
-                        hm.put(LilliContract.USERNAME, user)
-                        uEditor?.putString(LilliContract.USERNAME, user)
-                        uEditor?.commit()
+                        auth.put(LilliContract.USERNAME, user)
+                        editor?.putString(LilliContract.USERNAME, user)
                     }
+
                     if (pass != null) {
-                        hm.put(LilliContract.PASSWORD, pass)
-                        pEditor?.putString(LilliContract.PASSWORD, pass)
-                        pEditor?.commit()
+                        auth.put(LilliContract.PASSWORD, pass)
+                        editor?.putString(LilliContract.PASSWORD, pass)
                     }
+
+                    editor?.commit()
                 }
             }
-            else {
-                hm.put(LilliContract.USERNAME, u)
-                hm.put(LilliContract.PASSWORD, p)
-            }
-            return hm
+
+            return auth
         }
     }
 
     override fun getData(resource: String, context: Context?): InputStream? {
         val resolver = context?.getContentResolver()
-        val username = id(context)?.get(LilliContract.USERNAME)
-        val password = id(context)?.get(LilliContract.PASSWORD)
+        val credentials = getCredentials(context)
+
+        val username = credentials.get(LilliContract.USERNAME)
+        val password = credentials.get(LilliContract.PASSWORD)
+
         val uri = LilliContract.Objects.CONTENT_URI
                 .buildUpon()
-        ?.appendPath(resource)
-        ?.appendQueryParameter(LilliContract.USERNAME, username)
-        ?.appendQueryParameter(LilliContract.PASSWORD, password)
-        ?.build()
+               ?.appendPath(resource)
+               ?.appendQueryParameter(LilliContract.USERNAME, username)
+               ?.appendQueryParameter(LilliContract.PASSWORD, password)
+               ?.build()
 
         val input_stream = resolver?.openInputStream(uri)
 
@@ -69,8 +77,7 @@ class LilliDownloader : Downloader {
         return null
     }
 
-    fun toString() : String {
+    public fun toString() : String {
         return "lilli"
     }
-
 }

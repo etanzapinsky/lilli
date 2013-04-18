@@ -16,10 +16,14 @@ class LocationReceiver : BroadcastReceiver() {
         val latitude = location?.getLatitude()
         val longitude = location?.getLongitude()
 
+        val credentials = LilliDownloader.getCredentials(context)
+        val username = credentials.get(LilliContract.USERNAME)
+        val password = credentials.get(LilliContract.PASSWORD)
+
         val uri = LilliContract.Edges.CONTENT_URI
                  .buildUpon()
-                ?.appendQueryParameter(LilliContract.USERNAME, LilliDownloader.id(context)?.get(LilliContract.USERNAME))
-                ?.appendQueryParameter(LilliContract.PASSWORD, LilliDownloader.id(context)?.get(LilliContract.PASSWORD))
+                ?.appendQueryParameter(LilliContract.USERNAME, username)
+                ?.appendQueryParameter(LilliContract.PASSWORD, password)
                 ?.build()
 
         val values = ContentValues()

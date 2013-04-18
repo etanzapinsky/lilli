@@ -38,7 +38,7 @@ class TorrentDownloader : Downloader {
         return null
     }
 
-    fun toString() : String {
+    public fun toString() : String {
         return "bittorent"
     }
 }
