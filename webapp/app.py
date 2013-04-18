@@ -209,9 +209,5 @@ def signup():
 
     return jsonify(name=name, email=email, public_key=public_key, shared_secret=shared_secret)
 
-@app.route("/hi", methods=["GET"])
-def hi():
-    return "hi there!"
-
 if __name__ == "__main__":
     app.run()

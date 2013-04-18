@@ -18,8 +18,8 @@ class LocationReceiver : BroadcastReceiver() {
 
         val uri = LilliContract.Edges.CONTENT_URI
                  .buildUpon()
-                ?.appendQueryParameter(LilliContract.USERNAME, LilliDownloader.USERNAME)
-                ?.appendQueryParameter(LilliContract.PASSWORD, LilliDownloader.PASSWORD)
+                ?.appendQueryParameter(LilliContract.USERNAME, LilliDownloader.id(context)?.get(LilliContract.USERNAME))
+                ?.appendQueryParameter(LilliContract.PASSWORD, LilliDownloader.id(context)?.get(LilliContract.PASSWORD))
                 ?.build()
 
         val values = ContentValues()

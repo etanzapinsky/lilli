@@ -13,6 +13,40 @@ class LilliDownloader : Downloader {
     class object {
         val APPNAME = "gulliver"
         val PUBLICKEY = "10ea41f4-a80c-4ce2-95a2-1e04ca03ea60"
+        fun id(context : Context?) : HashMap<String, String>? {
+            val username = context?.getSharedPreferences(LilliContract.USERNAME, Context.MODE_PRIVATE)
+            val password = context?.getSharedPreferences(LilliContract.PASSWORD, Context.MODE_PRIVATE)
+            val u = username?.getString(LilliContract.USERNAME, null)
+            val p = password?.getString(LilliContract.PASSWORD, null)
+            val hm = HashMap<String, String>()
+            if (u == null || p == null) {
+                val url = LilliProvider.ENDPOINT + "/edges"
+                val request = HttpRequest(url, "POST")
+                request.basic(APPNAME, PUBLICKEY)
+                if (request.ok()) {
+                    val response = JSONObject(request.body())
+                    val user = response.getString("public_key")
+                    val pass = response.getString("shared_secret")
+                    val uEditor = username?.edit()
+                    val pEditor = password?.edit()
+                    if (user != null) {
+                        hm.put(LilliContract.USERNAME, user)
+                        uEditor?.putString(LilliContract.USERNAME, user)
+                        uEditor?.commit()
+                    }
+                    if (pass != null) {
+                        hm.put(LilliContract.PASSWORD, pass)
+                        pEditor?.putString(LilliContract.PASSWORD, pass)
+                        pEditor?.commit()
+                    }
+                }
+            }
+            else {
+                hm.put(LilliContract.USERNAME, u)
+                hm.put(LilliContract.PASSWORD, p)
+            }
+            return hm
+        }
     }
 
     override fun getData(resource: String, context: Context?): InputStream? {
@@ -35,38 +69,4 @@ class LilliDownloader : Downloader {
         return null
     }
 
-    fun id(context : Context?) : HashMap<String, String>? {
-        val username = context?.getSharedPreferences(LilliContract.USERNAME, Context.MODE_PRIVATE)
-        val password = context?.getSharedPreferences(LilliContract.PASSWORD, Context.MODE_PRIVATE)
-        val u = username?.getString(LilliContract.USERNAME, null)
-        val p = password?.getString(LilliContract.PASSWORD, null)
-        val hm = HashMap<String, String>()
-        if (u == null || p == null) {
-            val url = LilliProvider.ENDPOINT + "/edges"
-            val request = HttpRequest(url, "POST")
-            request.basic(APPNAME, PUBLICKEY)
-            if (request.ok()) {
-                val response = JSONObject(request.body())
-                val user = response.getString("public_key")
-                val pass = response.getString("shared_secret")
-                val uEditor = username?.edit()
-                val pEditor = password?.edit()
-                if (user != null) {
-                    hm.put(LilliContract.USERNAME, user)
-                    uEditor?.putString(LilliContract.USERNAME, user)
-                    uEditor?.commit()
-                }
-                if (pass != null) {
-                    hm.put(LilliContract.PASSWORD, pass)
-                    pEditor?.putString(LilliContract.PASSWORD, pass)
-                    pEditor?.commit()
-                }
-            }
-        }
-        else {
-            hm.put(LilliContract.USERNAME, u)
-            hm.put(LilliContract.PASSWORD, p)
-        }
-        return hm
-    }
 }
