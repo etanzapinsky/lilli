@@ -84,6 +84,7 @@ class LilliProvider : ContentProvider() {
 
     private fun buildAttributeRequest(uri: Uri?, values: ContentValues?, method: String): HttpRequest {
         val request = buildRequestFromUri(uri, method)
+        request.contentType("application/json")
         val output = JSONObject()
 
         for (v in values?.valueSet()?.iterator()) {

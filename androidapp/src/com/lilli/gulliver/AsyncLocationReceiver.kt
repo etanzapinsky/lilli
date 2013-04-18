@@ -22,13 +22,13 @@ class AsyncLocationReceiver(val context : Context?, val intent : Intent?, val pe
 
         val uri = LilliContract.Edges.CONTENT_URI
                  .buildUpon()
-                ?.path(username)
+                ?.appendPath(username)
                 ?.appendQueryParameter(LilliContract.USERNAME, username)
                 ?.appendQueryParameter(LilliContract.PASSWORD, password)
                 ?.build()
 
         val values = ContentValues()
-        values.put(LilliContract.Edges.LOCATION, "POINT(%s, %s)".format(longitude, latitude))
+        values.put(LilliContract.Edges.LOCATION, "POINT(%s %s)".format(longitude, latitude))
 
         resolver?.update(uri, values, null, null)
 
