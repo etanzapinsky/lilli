@@ -7,6 +7,7 @@ import java.io.InputStream
 import com.lilli.gulliver.lilliprovider.LilliProvider
 import com.github.kevinsawicki.http.HttpRequest
 import org.json.JSONObject
+import java.io.File
 
 class LilliDownloader : Downloader {
     class object {
@@ -53,7 +54,7 @@ class LilliDownloader : Downloader {
         }
     }
 
-    override fun getData(resource: String, context: Context?): InputStream? {
+    override fun getData(resource: String, context: Context?): File? {
         val resolver = context?.getContentResolver()
         val credentials = getCredentials(context)
 
@@ -67,12 +68,12 @@ class LilliDownloader : Downloader {
                ?.appendQueryParameter(LilliContract.PASSWORD, password)
                ?.build()
 
-        val input_stream = resolver?.openInputStream(uri)
-
-        if (input_stream != null) {
-            return BufferedInputStream(input_stream)
+        val row = resolver?.query(uri, array(LilliContract.Objects.DATA), null, null, null)
+        row?.moveToFirst()
+        val path = row?.getString(0)
+        if (path != null) {
+            return File(path)
         }
-
         return null
     }
 

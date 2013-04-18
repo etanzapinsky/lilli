@@ -10,8 +10,8 @@
 package com.lilli.gulliver
 
 import android.content.Context
-import java.io.InputStream
+import java.io.File
 
 trait Downloader {
-    fun getData(resource : String, context : Context?) : InputStream?
+    fun getData(resource : String, context : Context?) : File?
 }

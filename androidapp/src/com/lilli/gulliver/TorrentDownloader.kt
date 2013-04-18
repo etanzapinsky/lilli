@@ -5,6 +5,7 @@ import android.content.Context
 import com.lilli.gulliver.torrentprovider.TorrentContract
 import java.io.BufferedInputStream
 import android.util.Log
+import java.io.File
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,20 +17,19 @@ import android.util.Log
 class TorrentDownloader : Downloader {
     val AUTHORITY = "com.lilli.gulliver.torrentprovider"
 
-    override fun getData(resource: String, context: Context?): InputStream? {
+    override fun getData(resource: String, context: Context?): File? {
         val resolver = context?.getContentResolver()
         val uri = TorrentContract.Objects.CONTENT_URI
             .buildUpon()
             ?.appendPath(resource)
             ?.build()
-        val input_stream = resolver?.openInputStream(uri)
 
-        if (input_stream != null) {
-            resolver?.insert(uri, null)
-            Log.d(AUTHORITY, "successfully seeding")
-            return BufferedInputStream(input_stream)
+        val row = resolver?.query(uri, array(TorrentContract.Objects.DATA), null, null, null)
+        row?.moveToFirst()
+        val path = row?.getString(0)
+        if (path != null) {
+            return File(path)
         }
-
         return null
     }
 

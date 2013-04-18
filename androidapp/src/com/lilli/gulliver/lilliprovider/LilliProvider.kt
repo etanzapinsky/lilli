@@ -10,6 +10,7 @@ import com.github.kevinsawicki.http.HttpRequest
 import android.content.UriMatcher
 import org.json.JSONObject
 import android.content.Context
+import java.io.File
 
 class LilliProvider : ContentProvider() {
     class object {
@@ -35,7 +36,7 @@ class LilliProvider : ContentProvider() {
             val response = JSONObject(request.body())
 
             val row = when (sUriMatcher.match(uri)) {
-                LilliContract.OBJECTS_ID -> projection?.map(objectsMap(response))
+                LilliContract.OBJECTS_ID -> projection?.map(objectsMap(uri, response))
                 else -> projection?.map { null }
             }
 
@@ -45,11 +46,11 @@ class LilliProvider : ContentProvider() {
         return cursor
     }
 
-    private fun objectsMap(response: JSONObject?): (String) -> Any? {
+    private fun objectsMap(uri: Uri?, response: JSONObject?): (String) -> Any? {
         return {
             (k) -> when (k) {
                 LilliContract.Objects.ID -> getIdFromResponse(LilliContract.OBJECTS_ID, response)
-                LilliContract.Objects.DATA -> getFile(response)
+                LilliContract.Objects.DATA -> getFile(uri, response)
                 else -> response?.get(k)
             }
         }
@@ -71,10 +72,10 @@ class LilliProvider : ContentProvider() {
         return request
     }
 
-    private fun getFile(response: JSONObject?) : String? {
+    private fun getFile(uri : Uri?, response: JSONObject?) : String? {
         val context = getContext()
         val authoritative_location = response?.getString(LilliContract.Objects.AUTHORITATIVE_LOCATION)
-        val filename = "%d.tmp".format(authoritative_location?.hashCode())
+        val filename = "%s.tmp".format(uri?.getLastPathSegment())
         val fos = context?.openFileOutput(filename, Context.MODE_PRIVATE)
 
         HttpRequest.get(authoritative_location)?.receive(fos)

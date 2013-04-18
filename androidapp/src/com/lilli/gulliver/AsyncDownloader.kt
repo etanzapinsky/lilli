@@ -15,9 +15,7 @@ class AsyncDownloader(val downloader : Downloader?, val context : Context?, val 
 
         if (first != null) {
             val result = downloader?.getData(first, context)
-            val file = File(context?.getCacheDir(), "temp")
-            file.writeBytes(result?.readBytes())
-            return file.length()
+            return result?.length()
         }
 
         return null
