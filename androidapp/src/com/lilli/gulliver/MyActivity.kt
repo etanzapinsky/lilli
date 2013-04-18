@@ -52,7 +52,7 @@ class MyActivity() : Activity() {
         val pi = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         val lm = getSystemService(Context.LOCATION_SERVICE) as? LocationManager
 
-        lm?.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 0, 0.0, pi)
+        lm?.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 30000, 0.0, pi)
     }
 
     protected override fun onStop() {
