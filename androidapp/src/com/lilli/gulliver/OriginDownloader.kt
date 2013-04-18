@@ -21,4 +21,8 @@ class OriginDownloader() : Downloader {
     public override fun getData(resource : String, context : Context?) : InputStream? {
         return HttpRequest.get(resource)?.buffer()
     }
+
+    public fun toString() : String {
+        return "origin"
+    }
 }

@@ -69,4 +69,8 @@ class LilliDownloader : Downloader {
         return null
     }
 
+    fun toString() : String {
+        return "lilli"
+    }
+
 }

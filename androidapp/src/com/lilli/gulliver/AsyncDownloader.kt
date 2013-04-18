@@ -29,10 +29,10 @@ class AsyncDownloader(val downloader : Downloader?, val context : Context?, val 
             val elapsed = System.nanoTime() - startTime
 
             val values = ContentValues()
-            values.put(StatContract.StatEntry.COLUMN_NAME_NAME, "something");
-            values.put(StatContract.StatEntry.COLUMN_NAME_SIZE, file.length());
-            values.put(StatContract.StatEntry.COLUMN_NAME_TIME, elapsed);
-            values.put(StatContract.StatEntry.COLUMN_NAME_METHOD, "normal");
+            values.put(StatContract.StatEntry.COLUMN_NAME_NAME, "something")
+            values.put(StatContract.StatEntry.COLUMN_NAME_SIZE, file.length())
+            values.put(StatContract.StatEntry.COLUMN_NAME_TIME, elapsed)
+            values.put(StatContract.StatEntry.COLUMN_NAME_METHOD, downloader.toString())
 
             val db = dbHelper?.getWritableDatabase()
 
