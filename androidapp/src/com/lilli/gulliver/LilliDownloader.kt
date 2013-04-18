@@ -4,7 +4,6 @@ import android.content.Context
 import com.lilli.gulliver.lilliprovider.LilliContract
 import java.io.BufferedInputStream
 import java.io.InputStream
-import java.util.HashMap
 import com.lilli.gulliver.lilliprovider.LilliProvider
 import com.github.kevinsawicki.http.HttpRequest
 import org.json.JSONObject

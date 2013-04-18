@@ -11,7 +11,6 @@ package com.lilli.gulliver
 import android.app.Activity
 import android.os.Bundle
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import android.view.View
 import java.io.File

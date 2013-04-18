@@ -2,14 +2,9 @@ package com.lilli.gulliver
 
 import java.io.InputStream
 import android.content.Context
-import java.net.InetAddress
-import com.turn.ttorrent.client.Client
-import com.turn.ttorrent.client.SharedTorrent
-import java.io.File
 import com.lilli.gulliver.torrentprovider.TorrentContract
 import java.io.BufferedInputStream
 import android.util.Log
-
 
 /**
  * Created with IntelliJ IDEA.

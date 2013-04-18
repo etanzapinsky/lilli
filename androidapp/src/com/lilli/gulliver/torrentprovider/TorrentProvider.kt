@@ -12,9 +12,7 @@ import android.util.Log
 import android.database.MatrixCursor
 import com.turn.ttorrent.client.SharedTorrent
 import java.io.File
-import java.net.NetworkInterface
 import com.github.kevinsawicki.http.HttpRequest
-import android.os.Environment
 import java.util.concurrent.ConcurrentHashMap
 
 class TorrentProvider : ContentProvider() {
