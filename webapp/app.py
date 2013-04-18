@@ -160,7 +160,7 @@ def update_edge(key):
     if key != g.edge.public_key:
         abort(403)
 
-    g.edge.ip = request.json["ip"]
+    g.edge.ip = request.remote_addr
     g.edge.location = request.json["location"]
 
     db.session.commit()
