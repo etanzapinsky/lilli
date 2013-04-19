@@ -1,7 +1,6 @@
 package com.lilli.gulliver
 
 import android.os.AsyncTask
-import java.io.File
 import android.content.Context
 import android.content.ContentValues
 import android.widget.TextView

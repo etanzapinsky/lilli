@@ -10,7 +10,6 @@ import com.github.kevinsawicki.http.HttpRequest
 import android.content.UriMatcher
 import org.json.JSONObject
 import android.content.Context
-import java.io.File
 
 class LilliProvider : ContentProvider() {
     class object {
@@ -29,13 +28,20 @@ class LilliProvider : ContentProvider() {
     }
 
     public override fun query(uri: Uri?, projection: Array<out String>?, selection: String?, selectionArgs: Array<out String>?, sortOrder: String?): Cursor? {
+        val match = sUriMatcher.match(uri)
         val cursor = MatrixCursor(projection)
+
+        if (match == LilliContract.OBJECTS_ID && projection?.size == 1 && projection?.get(0) == LilliContract.Objects.CACHED_DATA) {
+            cursor.addRow(projection?.map { getCachedFile(uri) })
+            return cursor
+        }
+
         val request = buildRequestFromUri(uri, "GET")
 
         if (request.ok()) {
             val response = JSONObject(request.body())
 
-            val row = when (sUriMatcher.match(uri)) {
+            val row = when (match) {
                 LilliContract.OBJECTS_ID -> projection?.map(objectsMap(uri, response))
                 else -> projection?.map { null }
             }
@@ -74,15 +80,28 @@ class LilliProvider : ContentProvider() {
         return request
     }
 
+    private fun getFilename(uri : Uri?) : String {
+        return "%s.tmp".format(uri?.getLastPathSegment())
+    }
+
     private fun getFile(uri : Uri?, response: JSONObject?) : String? {
         val context = getContext()
         val authoritative_location = response?.getString(LilliContract.Objects.AUTHORITATIVE_LOCATION)
-        val filename = "%s.tmp".format(uri?.getLastPathSegment())
+        val filename = getFilename(uri)
         val fos = context?.openFileOutput(filename, Context.MODE_PRIVATE)
 
         HttpRequest.get(authoritative_location)?.receive(fos)
 
         return context?.getFileStreamPath(filename)?.getPath()
+    }
+
+    private fun getCachedFile(uri : Uri?) : String? {
+        val file = getContext()?.getFileStreamPath(getFilename(uri))
+        if (file?.exists() == true) {
+            return file?.getPath()
+        } else {
+            return null
+        }
     }
 
     private fun buildAttributeRequest(uri: Uri?, values: ContentValues?, method: String): HttpRequest {

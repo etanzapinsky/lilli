@@ -6,7 +6,6 @@ import android.content.Context
 import android.location.LocationManager
 import android.location.Location
 import com.lilli.gulliver.lilliprovider.LilliContract
-import android.util.Log
 import android.content.ContentValues
 
 class AsyncLocationReceiver(val context : Context?, val intent : Intent?, val pending : PendingResult?) : Runnable {

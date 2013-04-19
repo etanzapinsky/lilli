@@ -1,10 +1,7 @@
 package com.lilli.gulliver
 
-import java.io.InputStream
 import android.content.Context
 import com.lilli.gulliver.torrentprovider.TorrentContract
-import java.io.BufferedInputStream
-import android.util.Log
 import java.io.File
 
 /**

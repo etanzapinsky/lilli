@@ -15,6 +15,7 @@ public class LilliContract {
         public static final String ID = "_ID";
         public static final String AUTHORITATIVE_LOCATION = "authoritative_location";
         public static final String DATA = "_data";
+        public static final String CACHED_DATA = "_cached_data";
         public static final Uri CONTENT_URI = Uri.parse("content://com.lilli.gulliver.lilliprovider/objects");
     }
 
