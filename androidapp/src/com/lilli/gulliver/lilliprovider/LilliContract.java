@@ -9,6 +9,7 @@ public class LilliContract {
 
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
+    public static final String ALGORITHM = "algorithm";
 
     public static final class Objects {
         public static final String ID = "_ID";

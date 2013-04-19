@@ -57,14 +57,16 @@ class LilliProvider : ContentProvider() {
     }
 
     private fun buildRequestFromUri(uri: Uri?, method: String): HttpRequest {
+        val username = uri?.getQueryParameter(LilliContract.USERNAME)
+        val password = uri?.getQueryParameter(LilliContract.PASSWORD)
+        val algorithm = uri?.getQueryParameter(LilliContract.ALGORITHM)
+
         val url = Uri.parse(ENDPOINT)
                 ?.buildUpon()
                 ?.path(uri?.getPath())
+                ?.appendQueryParameter(LilliContract.ALGORITHM, algorithm)
                 ?.build()
                  .toString()
-
-        val username = uri?.getQueryParameter(LilliContract.USERNAME)
-        val password = uri?.getQueryParameter(LilliContract.PASSWORD)
 
         val request = HttpRequest(url, method)
         request.basic(username, password)
