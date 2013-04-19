@@ -156,31 +156,25 @@ def get(key):
 
         edge_ip = IPNetwork(g.edge.ip)
         edge_supernets = edge_ip.supernet(BLOCK_SIZE)
-        block = str(edge_supernets[0])
-        ip_neighbors = Edge.query.filter(and_(Edge.id != g.edge.id, Edge.ip.op("<<")(block)))
+        superblock = str(edge_supernets[0])
+        ip_neighbors = Edge.query.filter(and_(Edge.id != g.edge.id, Edge.ip.op("<<")(superblock)))
 
         knn = []
-        knn_cache = set()
         tree = {}
-        distance = 0
+        knn_cache = set()
 
         for neighbor in ip_neighbors:
             supernets = IPNetwork(neighbor.ip).supernet(BLOCK_SIZE)
             supernets.reverse()
             tree[neighbor] = supernets
 
-        for distance in xrange(distance, BLOCK_SIZE):
-            for neighbor in ip_neighbors:
-                if edge_ip in tree[neighbor][distance]:
-                    if neighbor in knn_cache:
-                        continue
+        for distance in xrange(0, BLOCK_SIZE):
+            for neighbor, subnet in tree.iteritems():
+                if len(knn) < IP_PEER_MAX and neighbor not in knn_cache and edge_ip in subnet[distance]:
                     knn.append(neighbor)
                     knn_cache.add(neighbor)
 
-            distance += 1
-
-            if len(knn) >= IP_PEER_MAX:
-                knn = knn[:IP_PEER_MAX]
+            if len(knn) == IP_PEER_MAX:
                 break
 
         return [{'ip': n.ip,
