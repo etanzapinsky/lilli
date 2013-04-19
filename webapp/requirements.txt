@@ -3,3 +3,4 @@ SQLAlchemy==0.8.0
 Flask-SQLAlchemy==0.16
 psycopg2==2.5
 GeoAlchemy2==0.2
+netaddr==0.7.10

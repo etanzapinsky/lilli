@@ -3,9 +3,13 @@ import uuid
 from flask import Flask, make_response, g, request, jsonify
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import and_
+from sqlalchemy.dialects.postgresql import INET
 from geoalchemy2 import Geometry
 
 from functools import update_wrapper
+
+from netaddr import IPNetwork
+
 # development configuration
 DEBUG = True
 SQLALCHEMY_DATABASE_URI = "postgres://localhost/lilli"
@@ -14,6 +18,9 @@ SQLALCHEMY_DATABASE_URI = "postgres://localhost/lilli"
 WIFI_DIRECT_RANGE = 50
 WIFI_DIRECT_PEER_MAX = 5 # to be tweeked appropriately
 TOTAL_PEER_MAX = 10 # to be tweeked appropriately
+
+IP_PEER_MAX = 5
+BLOCK_SIZE = 16 # B Block
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -44,7 +51,7 @@ class Edge(db.Model):
     __tablename__ = "edges"
     
     id = db.Column(db.Integer, primary_key=True)
-    ip = db.Column(db.String(length=255))
+    ip = db.Column(INET)
     geom = db.Column(Geometry('POINT'))
     public_key = db.Column(db.String(length=255))
     shared_secret = db.Column(db.String(length=255))
@@ -144,7 +151,41 @@ def get(key):
         abort(404)
 
     def neighbors_using_ip():
-        return []
+        if g.edge.ip == None:
+            return []
+
+        edge_ip = IPNetwork(g.edge.ip)
+        edge_supernets = edge_ip.supernet(BLOCK_SIZE)
+        block = str(edge_supernets[0])
+        ip_neighbors = Edge.query.filter(and_(Edge.id != g.edge.id, Edge.ip.op("<<")(block)))
+
+        knn = []
+        knn_cache = set()
+        tree = {}
+        distance = 0
+
+        for neighbor in ip_neighbors:
+            supernets = IPNetwork(neighbor.ip).supernet(BLOCK_SIZE)
+            supernets.reverse()
+            tree[neighbor] = supernets
+
+        for distance in xrange(distance, BLOCK_SIZE):
+            for neighbor in ip_neighbors:
+                if edge_ip in tree[neighbor][distance]:
+                    if neighbor in knn_cache:
+                        continue
+                    knn.append(neighbor)
+                    knn_cache.add(neighbor)
+
+            distance += 1
+
+            if len(knn) >= IP_PEER_MAX:
+                knn = knn[:IP_PEER_MAX]
+                break
+
+        return [{'ip': n.ip,
+                 'public_key': n.public_key,
+                 'connect_with': 'network'} for n in knn]
 
     def neighbors_using_gps():
         wifidirect_neighbors = Edge.query \
@@ -158,7 +199,7 @@ def get(key):
 
     algorithm = {'ip': neighbors_using_ip,
                  'gps': neighbors_using_gps}
-    neighbors = algorithm[request.json["algorithm"]]()
+    neighbors = algorithm[request.args["algorithm"]]()
 
     return jsonify(neighbors=neighbors, authoritative_location=obj.authoritative_location)
 
