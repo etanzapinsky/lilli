@@ -29,6 +29,7 @@ import android.view.MenuItem
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.AdapterView
 import android.widget.Adapter
+import com.lilli.gulliver.lilliprovider.NetworkService
 
 class MyActivity() : Activity() {
     class object {
@@ -65,6 +66,9 @@ class MyActivity() : Activity() {
         val lm = getSystemService(Context.LOCATION_SERVICE) as? LocationManager
 
         lm?.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 5000, 0.0, pi)
+
+        val serviceIntent = Intent(this, javaClass<NetworkService>())
+        startService(serviceIntent)
     }
 
     public override fun onCreateOptionsMenu(menu : Menu?): Boolean {

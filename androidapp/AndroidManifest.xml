@@ -25,5 +25,7 @@
                 <action android:name="com.lilli.gulliver.LOCATION_UPDATE_RECEIVED"/>
             </intent-filter>
         </receiver>
+        <service android:name=".lilliprovider.NetworkService" android:exported="false">
+        </service>
     </application>
 </manifest>
