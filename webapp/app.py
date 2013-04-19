@@ -4,7 +4,7 @@ from flask import Flask, make_response, g, request, jsonify
 from flask.ext.sqlalchemy import SQLAlchemy
 from sqlalchemy import and_
 from sqlalchemy.dialects.postgresql import INET
-from geoalchemy2 import Geometry
+from geoalchemy2 import Geography
 
 from functools import update_wrapper
 
@@ -16,8 +16,8 @@ SQLALCHEMY_DATABASE_URI = "postgres://localhost/lilli"
 # 50 meters, ~ 160 ft -> even though range is ~200 ft, we dont want the user to
 # have walked out of range before we could connect and waste time
 WIFI_DIRECT_RANGE = 50
-WIFI_DIRECT_PEER_MAX = 5 # to be tweeked appropriately
-TOTAL_PEER_MAX = 10 # to be tweeked appropriately
+MAX_RANGE = 3220 # 2 miles, but really what should this be?
+PEER_MAX = 10 # to be tweeked appropriately
 
 IP_PEER_MAX = 5
 BLOCK_SIZE = 16 # B Block
@@ -52,7 +52,7 @@ class Edge(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     ip = db.Column(INET)
-    geom = db.Column(Geometry('POINT'))
+    geog = db.Column(Geography('POINT'))
     public_key = db.Column(db.String(length=255))
     shared_secret = db.Column(db.String(length=255))
     application_id = db.Column(db.Integer, db.ForeignKey("applications.id"))
@@ -188,14 +188,28 @@ def get(key):
                  'connect_with': 'network'} for n in knn]
 
     def neighbors_using_gps():
-        wifidirect_neighbors = Edge.query \
-            .filter(and_(Edge.geom.ST_DWithin(g.edge.geom, WIFI_DIRECT_RANGE),
-                         Edge.id != g.edge.id)) \
-            .order_by(Edge.geom.distance_centroid(g.edge.geom.ST_AsText())) \
-            .limit(WIFI_DIRECT_PEER_MAX).all()
-        return [{'ip': n.ip,
-                 'public_key': n.public_key,
-                 'connect_with': 'wifi_direct'} for n in wifidirect_neighbors]
+        neighbors_query = Edge.query \
+            .filter(Edge.id.in_([e.id for e in obj.edges]),
+                    Edge.geog.ST_DWithin(g.edge.geog, MAX_RANGE),
+                    Edge.id != g.edge.id) \
+            .order_by(Edge.geog.ST_Distance(g.edge.geog))
+        wifidirect_query = neighbors_query \
+            .filter(Edge.geog.ST_DWithin(g.edge.geog, WIFI_DIRECT_RANGE)) \
+            .order_by(Edge.geog.ST_Distance(g.edge.geog)) \
+            .limit(PEER_MAX)
+        direct_neighbors = [{'ip': n.ip,
+                             'public_key': n.public_key,
+                             'connect_with': 'wifi_direct'} for n in wifidirect_query.all()]
+        other_neighbors = [{'ip': n.ip,
+                            'public_key': n.public_key,
+                            'connect_with': 'network'}
+                           for n in neighbors_query \
+                               .filter(~Edge.id.in_([i[0] for i in wifidirect_query.with_entities(Edge.id)])) \
+                               .limit(PEER_MAX - len(direct_neighbors)).all()
+                           ]
+        neighbors = list(direct_neighbors)
+        neighbors.extend(other_neighbors)
+        return neighbors
 
     algorithm = {'ip': neighbors_using_ip,
                  'gps': neighbors_using_gps}
@@ -224,7 +238,7 @@ def update_edge(key):
         abort(403)
 
     g.edge.ip = request.remote_addr
-    g.edge.geom = request.json["location"]
+    g.edge.geog = request.json["location"]
 
     db.session.commit()
 
