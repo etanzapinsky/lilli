@@ -20,7 +20,7 @@ MAX_RANGE = 3220 # 2 miles, but really what should this be?
 PEER_MAX = 10 # to be tweeked appropriately
 
 IP_PEER_MAX = 5
-BLOCK_SIZE = 16 # B Block
+BLOCK_SIZE = 32 # B Block
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -156,8 +156,7 @@ def get(key):
 
         edge_ip = IPNetwork(g.edge.ip)
         superblock = str(edge_ip.supernet(BLOCK_SIZE)[0])
-        # ip_neighbors = Edge.query.filter(and_(Edge.id != g.edge.id, Edge.ip.op("<<")(superblock)))
-        ip_neighbors = Edge.query.filter(Edge.id.in_([e.id for e in obj.edges]), Edge.id != g.edge.id)
+        ip_neighbors = Edge.query.filter(Edge.objects.contains(obj), Edge.id != g.edge.id, Edge.ip.op("<<")(superblock))
 
         knn = []
         knn_cache = set()
