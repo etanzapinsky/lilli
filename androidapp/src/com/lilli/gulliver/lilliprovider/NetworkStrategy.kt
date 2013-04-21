@@ -5,10 +5,12 @@ import android.net.Uri
 import org.json.JSONObject
 import java.net.Socket
 import org.apache.commons.io.IOUtils
+import android.util.Log
 
 class NetworkStrategy {
     class object : LilliStrategy {
         override fun get(context: Context?, uri: Uri?, response: JSONObject?): String? {
+            Log.d("NetworkStrategy", "DOING IT")
             val socket = Socket(response?.getString("ip"), LilliNetworkServer.PORT)
             val out = socket.getOutputStream()
 

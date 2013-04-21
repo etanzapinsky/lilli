@@ -64,7 +64,7 @@ class LilliDownloader : Downloader {
                ?.appendPath(resource)
                ?.appendQueryParameter(LilliContract.USERNAME, username)
                ?.appendQueryParameter(LilliContract.PASSWORD, password)
-               ?.appendQueryParameter(LilliContract.ALGORITHM, "gps") // just for now
+               ?.appendQueryParameter(LilliContract.ALGORITHM, "ip") // just for now
                ?.build()
 
         val row = resolver?.query(uri, array(LilliContract.Objects.DATA), null, null, null)

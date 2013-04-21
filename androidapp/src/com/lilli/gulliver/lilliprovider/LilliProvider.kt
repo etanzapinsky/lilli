@@ -72,12 +72,11 @@ class LilliProvider : ContentProvider() {
         val password = uri?.getQueryParameter(LilliContract.PASSWORD)
         val algorithm = uri?.getQueryParameter(LilliContract.ALGORITHM)
 
-        val url = Uri.parse(ENDPOINT)
-                ?.buildUpon()
-                ?.path(uri?.getPath())
-                ?.appendQueryParameter(LilliContract.ALGORITHM, algorithm)
-                ?.build()
-                 .toString()
+        var builder = Uri.parse(ENDPOINT)?.buildUpon()?.path(uri?.getPath())
+        if (algorithm != null) {
+            builder = builder?.appendQueryParameter(LilliContract.ALGORITHM, algorithm)
+        }
+        val url = builder?.build().toString()
 
         val request = HttpRequest(url, method)
         request.basic(username, password)
@@ -86,6 +85,7 @@ class LilliProvider : ContentProvider() {
     }
 
     private fun getFile(uri : Uri?, response: JSONObject?) : String? {
+        var path : String? = null
         val context = getContext()
         val neighbors = response?.getJSONArray("neighbors")
 
@@ -94,15 +94,23 @@ class LilliProvider : ContentProvider() {
             for (i in range) {
                 val neighbor = neighbors.getJSONObject(i)
                 val strategy = strategies[neighbor?.getString("connect_with")]
-                val path = strategy?.get(context, uri, neighbor)
+                path = strategy?.get(context, uri, neighbor)
 
                 if (path != null) {
-                    return path
+                    break
                 }
             }
         }
 
-        return AuthoritativeLocationStrategy.get(context, uri, response)
+        if (path == null) {
+            path = AuthoritativeLocationStrategy.get(context, uri, response)
+        }
+
+        if (path != null) {
+            update(uri, null, null, null)
+        }
+
+        return path
     }
 
     private fun getCachedFile(uri : Uri?) : String? {
@@ -119,8 +127,10 @@ class LilliProvider : ContentProvider() {
         request.contentType("application/json")
         val output = JSONObject()
 
-        for (v in values?.valueSet()?.iterator()) {
-            output.put(v.getKey(), v.getValue())
+        if (values != null) {
+            for (v in values.valueSet()?.iterator()) {
+                output.put(v.getKey(), v.getValue())
+            }
         }
 
         request.send(output.toString())
