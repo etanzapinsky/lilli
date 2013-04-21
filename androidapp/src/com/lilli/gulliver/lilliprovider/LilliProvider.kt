@@ -16,7 +16,7 @@ class LilliProvider : ContentProvider() {
     class object {
         val ENDPOINT = "http://lilli.etanzapinsky.com"
         private val AUTHORITY = "com.lilli.gulliver.lilliprovider"
-        private val strategies = mapOf("network" to NetworkStrategy)
+        private val strategies = mapOf("network" to NetworkStrategy, "wifi_direct" to WifiDirectStrategy)
 
         fun getFilename(uri : Uri?) : String {
             return "%s.tmp".format(uri?.getLastPathSegment())
