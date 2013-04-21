@@ -193,7 +193,7 @@ class WifiDirectBroadcastReceiver(val mManager : WifiP2pManager?, val mChannel :
             val networkInfo : NetworkInfo? = intent?.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO)
 
             if (networkInfo != null && networkInfo.isConnected()) {
-                //                    mManager?.requestConnectionInfo(mChannel)
+                Log.d(AUTHORITY, "we're connected!")
             }
 
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
