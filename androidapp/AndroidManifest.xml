@@ -33,5 +33,7 @@
         </receiver>
         <service android:name=".lilliprovider.NetworkService" android:exported="false">
         </service>
+        <service android:name=".lilliprovider.WifiDirectService" android:exported="false">
+        </service>
     </application>
 </manifest>

@@ -30,6 +30,7 @@ import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.AdapterView
 import android.widget.Adapter
 import com.lilli.gulliver.lilliprovider.NetworkService
+import com.lilli.gulliver.lilliprovider.WifiDirectService
 
 class MyActivity() : Activity() {
     class object {
@@ -69,6 +70,8 @@ class MyActivity() : Activity() {
 
         val serviceIntent = Intent(this, javaClass<NetworkService>())
         startService(serviceIntent)
+        val wifiDirectIntent = Intent(this, javaClass<WifiDirectService>())
+        startService(wifiDirectIntent)
     }
 
     public override fun onCreateOptionsMenu(menu : Menu?): Boolean {

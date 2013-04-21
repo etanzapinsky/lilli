@@ -11,7 +11,7 @@ class LilliDownloader : Downloader {
     class object {
         private val APPNAME = "gulliver"
         private val PUBLICKEY = "10ea41f4-a80c-4ce2-95a2-1e04ca03ea60"
-        private val CREDENTIALS = "credentials"
+        public val CREDENTIALS : String = "credentials"
 
         fun getCredentials(context : Context?) : Map<String, String?> {
             val credentials = context?.getSharedPreferences(CREDENTIALS, Context.MODE_PRIVATE)
