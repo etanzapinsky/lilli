@@ -160,7 +160,7 @@ def get(key):
 
         knn = []
         knn_cache = set()
-        tree = dict([(neighbor, IPNetwork(neighbor.ip).supernet(BLOCK_SIZE)) for neighbor in ip_neighbors])
+        tree = dict([(neighbor, IPNetwork(neighbor.ip).supernet(32 - BLOCK_SIZE)) for neighbor in ip_neighbors])
 
         for distance in reversed(xrange(BLOCK_SIZE)):
             for neighbor, subnet in tree.iteritems():
