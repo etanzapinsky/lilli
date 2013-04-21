@@ -157,7 +157,7 @@ def get(key):
         edge_ip = IPNetwork(g.edge.ip)
         superblock = str(edge_ip.supernet(BLOCK_SIZE)[0])
         # ip_neighbors = Edge.query.filter(and_(Edge.id != g.edge.id, Edge.ip.op("<<")(superblock)))
-        ip_neighbors = Edge.query.filter(Edge.id != g.edge.id)
+        ip_neighbors = Edge.query.filter(and_(Edge.objects.contains(obj), Edge.id != g.edge.id))
 
         knn = []
         knn_cache = set()
