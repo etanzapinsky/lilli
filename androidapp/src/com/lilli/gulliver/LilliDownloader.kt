@@ -7,7 +7,7 @@ import com.github.kevinsawicki.http.HttpRequest
 import org.json.JSONObject
 import java.io.File
 
-class LilliDownloader : Downloader {
+class LilliDownloader(val algorithm : String?) : Downloader {
     class object {
         private val APPNAME = "gulliver"
         private val PUBLICKEY = "10ea41f4-a80c-4ce2-95a2-1e04ca03ea60"
@@ -64,7 +64,7 @@ class LilliDownloader : Downloader {
                ?.appendPath(resource)
                ?.appendQueryParameter(LilliContract.USERNAME, username)
                ?.appendQueryParameter(LilliContract.PASSWORD, password)
-               ?.appendQueryParameter(LilliContract.ALGORITHM, "ip") // just for now
+               ?.appendQueryParameter(LilliContract.ALGORITHM, algorithm?.toLowerCase()) // just for now
                ?.build()
 
         val row = resolver?.query(uri, array(LilliContract.Objects.DATA), null, null, null)

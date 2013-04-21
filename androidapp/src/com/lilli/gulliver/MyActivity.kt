@@ -39,12 +39,48 @@ class MyActivity() : Activity() {
 
     private var responseMessage : TextView? = null
     private var mDbHelper : StatDbHelper? = null
-    private var currentlySelected : String? = null
+    private var currentlySelectedProvider : String? = null
+    private var currentlySelectedAlgorithm : String? = null
+    private var algorithm_spinner : Spinner? = null
 
     protected override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.main)
+        setupView()
+        setupDB()
+        startLocationUpdates()
+        startNetworkService()
+        startWifiService()
+    }
 
+    private fun setupView() {
+        setContentView(R.layout.main)
+        responseMessage = findViewById(R.id.response_text) as? TextView
+
+        setupProviderSpinner()
+        setupAlgorithmSpinner()
+    }
+
+    private fun setupDB() {
+        mDbHelper = StatDbHelper(this)
+    }
+
+    private fun setupAlgorithmSpinner() {
+        algorithm_spinner = findViewById(R.id.lilli_spinner) as? Spinner
+        val adapter = ArrayAdapter.createFromResource(this, R.array.lilli_spinner_options, android.R.layout.simple_spinner_item)
+        adapter?.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        algorithm_spinner?.setOnItemSelectedListener(object : OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<out Adapter?>?) {
+                return
+            }
+
+            override fun onItemSelected(parent: AdapterView<out Adapter?>?, view: View?, position: Int, id: Long) {
+                currentlySelectedAlgorithm = parent?.getItemAtPosition(position).toString()
+            }
+        })
+        algorithm_spinner?.setAdapter(adapter)
+    }
+
+    private fun setupProviderSpinner() {
         val spinner = findViewById(R.id.spinner) as? Spinner
         val adapter = ArrayAdapter.createFromResource(this, R.array.dropdown_options, android.R.layout.simple_spinner_item)
         adapter?.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -54,22 +90,30 @@ class MyActivity() : Activity() {
             }
 
             override fun onItemSelected(parent: AdapterView<out Adapter?>?, view: View?, position: Int, id: Long) {
-                currentlySelected = parent?.getItemAtPosition(position).toString()
+                currentlySelectedProvider = parent?.getItemAtPosition(position).toString()
+                when (currentlySelectedProvider) {
+                    "Lilli" -> algorithm_spinner?.setVisibility(View.VISIBLE)
+                    else -> algorithm_spinner?.setVisibility(View.GONE)
+                }
             }
         })
         spinner?.setAdapter(adapter)
+    }
 
-        responseMessage = findViewById(R.id.response_text) as? TextView
-        mDbHelper = StatDbHelper(this)
-
+    private fun startLocationUpdates() {
         val intent = Intent(LOCATION_ACTION)
         val pi = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         val lm = getSystemService(Context.LOCATION_SERVICE) as? LocationManager
 
         lm?.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 5000, 0.0, pi)
+    }
 
+    private fun startNetworkService() {
         val serviceIntent = Intent(this, javaClass<NetworkService>())
         startService(serviceIntent)
+    }
+
+    private fun startWifiService() {
         val wifiDirectIntent = Intent(this, javaClass<WifiDirectService>())
         startService(wifiDirectIntent)
     }
@@ -89,9 +133,9 @@ class MyActivity() : Activity() {
         val editText = findViewById(R.id.url_string) as? EditText
         val message = editText?.getText().toString()
 
-        val downloader = when (currentlySelected) {
+        val downloader = when (currentlySelectedProvider) {
             "Origin" -> OriginDownloader()
-            "Lilli" -> LilliDownloader()
+            "Lilli" -> LilliDownloader(currentlySelectedAlgorithm)
             "BitTorrent" -> TorrentDownloader()
             else -> null
         }

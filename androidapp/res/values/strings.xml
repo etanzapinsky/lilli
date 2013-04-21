@@ -14,4 +14,8 @@
         <item>Lilli</item>
         <item>BitTorrent</item>
     </string-array>
+    <string-array name="lilli_spinner_options">
+        <item>GPS</item>
+        <item>IP</item>
+    </string-array>
 </resources>

@@ -17,12 +17,18 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/textView"/>
 
+    <Spinner android:id="@+id/lilli_spinner"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:layout_below="@id/spinner"
+             android:visibility="gone"/>
+
     <EditText
             android:id="@+id/url_string"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textUri"
-            android:layout_below="@id/spinner"
+            android:layout_below="@id/lilli_spinner"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/button"
             android:hint="@string/text_hint"/>
@@ -33,7 +39,7 @@
             android:layout_height="wrap_content"
             android:text="@string/send"
             android:onClick="requestURL"
-            android:layout_below="@id/spinner"
+            android:layout_below="@id/lilli_spinner"
             android:layout_alignParentRight="true"/>
 
     <TextView
