@@ -9,6 +9,8 @@ import android.content.Context
 import java.io.File
 import org.apache.commons.io.IOUtils
 import java.io.FileInputStream
+import android.util.Log
+import java.net.InetSocketAddress
 
 class NetworkService : Service() {
     public override fun onBind(intent: Intent?): IBinder? {
@@ -16,8 +18,11 @@ class NetworkService : Service() {
     }
 
     public override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return Service.START_NOT_STICKY
+    }
+
+    public override fun onCreate() {
         Thread(LilliNetworkServer(getApplicationContext())).start()
-        return Service.START_STICKY
     }
 }
 
@@ -59,11 +64,14 @@ class LilliNetworkWorker(val context : Context?, val socket : Socket) : Runnable
 }
 
 class LilliNetworkServer(val context : Context?) : Runnable {
-    private val PORT = 4119
-    private val receiverServerSocket = ServerSocket(PORT)
+    class object {
+        val PORT = 6998
+    }
+    private val receiverServerSocket = ServerSocket()
 
     public override fun run() {
         receiverServerSocket.setReuseAddress(true)
+        receiverServerSocket.bind(InetSocketAddress(PORT))
         while (true) {
             val receiverSocket = receiverServerSocket.accept()
             Thread(LilliNetworkWorker(context, receiverSocket)).start()

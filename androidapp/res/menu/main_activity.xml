@@ -5,4 +5,10 @@
           android:title="@string/trash"
           android:showAsAction="ifRoom|withText"
           android:onClick="deleteDb"/>
+
+    <item android:id="@+id/menu_refresh"
+          android:icon="@drawable/ic_action_refresh"
+          android:title="@string/refresh"
+          android:showAsAction="ifRoom|withText"
+          android:onClick="refreshLocation"/>
 </menu>

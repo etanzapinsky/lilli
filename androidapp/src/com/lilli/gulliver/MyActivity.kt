@@ -104,6 +104,13 @@ class MyActivity() : Activity() {
         TrashDialogFragment().show(getFragmentManager(), "trash")
     }
 
+    public fun refreshLocation(item : MenuItem?) {
+        val intent = Intent(LOCATION_ACTION)
+        val lm = getSystemService(Context.LOCATION_SERVICE) as? LocationManager
+        intent.putExtra(LocationManager.KEY_LOCATION_CHANGED, lm?.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER))
+        sendBroadcast(intent)
+    }
+
     public fun backupDb() {
         try {
             val sd = Environment.getExternalStorageDirectory()

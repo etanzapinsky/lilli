@@ -15,6 +15,11 @@ class LilliProvider : ContentProvider() {
     class object {
         val ENDPOINT = "http://lilli.etanzapinsky.com"
         private val AUTHORITY = "com.lilli.gulliver.lilliprovider"
+        private val strategies = mapOf("network" to NetworkStrategy)
+
+        fun getFilename(uri : Uri?) : String {
+            return "%s.tmp".format(uri?.getLastPathSegment())
+        }
     }
 
     private val sUriMatcher = UriMatcher(UriMatcher.NO_MATCH)
@@ -80,19 +85,24 @@ class LilliProvider : ContentProvider() {
         return request
     }
 
-    private fun getFilename(uri : Uri?) : String {
-        return "%s.tmp".format(uri?.getLastPathSegment())
-    }
-
     private fun getFile(uri : Uri?, response: JSONObject?) : String? {
         val context = getContext()
-        val authoritative_location = response?.getString(LilliContract.Objects.AUTHORITATIVE_LOCATION)
-        val filename = getFilename(uri)
-        val fos = context?.openFileOutput(filename, Context.MODE_PRIVATE)
+        val neighbors = response?.getJSONArray("neighbors")
 
-        HttpRequest.get(authoritative_location)?.receive(fos)
+        if (neighbors != null && neighbors.length() > 0) {
+            val range = IntRange(0, neighbors.length())
+            for (i in range) {
+                val neighbor = neighbors.getJSONObject(i)
+                val strategy = strategies[neighbor?.getString("connect_with")]
+                val path = strategy?.get(context, uri, neighbor)
 
-        return context?.getFileStreamPath(filename)?.getPath()
+                if (path != null) {
+                    return path
+                }
+            }
+        }
+
+        return AuthoritativeLocationStrategy.get(context, uri, response)
     }
 
     private fun getCachedFile(uri : Uri?) : String? {
