@@ -15,6 +15,7 @@ class NetworkStrategy {
             val key = uri?.getLastPathSegment()?.getBytes()
             if (key != null) {
                 out?.write(key)
+                out?.flush()
             }
 
             val filename = LilliProvider.getFilename(uri)
