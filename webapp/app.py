@@ -56,6 +56,7 @@ class Edge(db.Model):
     public_key = db.Column(db.String(length=255))
     shared_secret = db.Column(db.String(length=255))
     application_id = db.Column(db.Integer, db.ForeignKey("applications.id"))
+    wifi_direct_address = db.Column(db.String(length=255))
 
     application = db.relationship("Application", backref="edges")
     objects = db.relationship("Object", secondary=edges_objects, backref="edges")
@@ -174,6 +175,7 @@ def get(key):
 
         return [{'ip': n.ip,
                  'public_key': n.public_key,
+                 'wifi_direct_address': n.wifi_direct_address,
                  'connect_with': 'network'} for n in knn]
 
     def neighbors_using_gps():
@@ -188,9 +190,11 @@ def get(key):
             .limit(PEER_MAX)
         direct_neighbors = [{'ip': n.ip,
                              'public_key': n.public_key,
+                             'wifi_direct_address': n.wifi_direct_address,
                              'connect_with': 'wifi_direct'} for n in wifidirect_query.all()]
         other_neighbors = [{'ip': n.ip,
                             'public_key': n.public_key,
+                            'wifi_direct_address': n.wifi_direct_address,
                             'connect_with': 'network'}
                            for n in neighbors_query \
                                .filter(~Edge.id.in_([i[0] for i in wifidirect_query.with_entities(Edge.id)])) \
@@ -228,6 +232,7 @@ def update_edge(key):
 
     g.edge.ip = request.remote_addr
     g.edge.geog = request.json["location"]
+    g.edge.wifi_direct_address = request.json["wifi_direct_address"]
 
     db.session.commit()
 
