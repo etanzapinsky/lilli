@@ -30,6 +30,7 @@ class LilliNetworkWorker(val context : Context?, val socket : Socket) : Runnable
     private val BUFFER_SIZE = 4096
 
     public override fun run() {
+        Log.d("LilliNetworkWorker", "INCOMING NETWORK REQUEST!!!")
         val request = read()
         val uri = LilliContract.Objects.CONTENT_URI
                 .buildUpon()
@@ -44,6 +45,7 @@ class LilliNetworkWorker(val context : Context?, val socket : Socket) : Runnable
         val path = cursor?.getString(0)
 
         if (path != null) {
+            Log.d("LilliNetworkWorker", "SENDING FILE OVER NETWORK!")
             IOUtils.copy(FileInputStream(File(path)), socket.getOutputStream())
         }
 

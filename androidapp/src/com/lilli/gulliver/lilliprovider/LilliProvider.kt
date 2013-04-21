@@ -10,6 +10,7 @@ import com.github.kevinsawicki.http.HttpRequest
 import android.content.UriMatcher
 import org.json.JSONObject
 import android.content.Context
+import android.util.Log
 
 class LilliProvider : ContentProvider() {
     class object {
@@ -88,6 +89,8 @@ class LilliProvider : ContentProvider() {
         var path : String? = null
         val context = getContext()
         val neighbors = response?.getJSONArray("neighbors")
+
+        Log.d(AUTHORITY, response.toString())
 
         if (neighbors != null && neighbors.length() > 0) {
             val range = IntRange(0, neighbors.length())
