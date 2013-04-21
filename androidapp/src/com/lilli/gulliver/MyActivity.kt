@@ -135,6 +135,7 @@ class MyActivity() : Activity() {
 
         val downloader = when (currentlySelectedProvider) {
             "Origin" -> OriginDownloader()
+            "CDN" -> CDNDownloader()
             "Lilli" -> LilliDownloader(currentlySelectedAlgorithm)
             "BitTorrent" -> TorrentDownloader()
             else -> null

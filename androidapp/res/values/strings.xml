@@ -11,6 +11,7 @@
     <string name="text_hint">Enter a resource…</string>
     <string-array name="dropdown_options">
         <item>Origin</item>
+        <item>CDN</item>
         <item>Lilli</item>
         <item>BitTorrent</item>
     </string-array>

@@ -13,7 +13,7 @@ import android.content.Context
 import com.github.kevinsawicki.http.HttpRequest
 import java.io.File
 
-class OriginDownloader() : Downloader {
+open class OriginDownloader() : Downloader {
 
     /**
      * Make sure to close input stream when done!
@@ -27,7 +27,7 @@ class OriginDownloader() : Downloader {
         return file
     }
 
-    public fun toString() : String {
+    public open fun toString() : String {
         return "origin"
     }
 }
