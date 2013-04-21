@@ -28,8 +28,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textUri"
-            android:layout_below="@id/lilli_spinner"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/button"
             android:hint="@string/text_hint"/>
 
@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:text="@string/send"
             android:onClick="requestURL"
-            android:layout_below="@id/lilli_spinner"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"/>
 
     <TextView

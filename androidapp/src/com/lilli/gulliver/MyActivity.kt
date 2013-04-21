@@ -31,6 +31,8 @@ import android.widget.AdapterView
 import android.widget.Adapter
 import com.lilli.gulliver.lilliprovider.NetworkService
 import com.lilli.gulliver.lilliprovider.WifiDirectService
+import android.util.Log
+import com.lilli.gulliver.lilliprovider.LilliContract
 
 class MyActivity() : Activity() {
     class object {
@@ -42,6 +44,12 @@ class MyActivity() : Activity() {
     private var currentlySelectedProvider : String? = null
     private var currentlySelectedAlgorithm : String? = null
     private var algorithm_spinner : Spinner? = null
+    private val downloaders = mapOf(
+            "Origin" to OriginDownloader,
+            "CDN" to CDNDownloader,
+            "Lilli" to LilliDownloader,
+            "BitTorrent" to TorrentDownloader
+    )
 
     protected override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
@@ -133,18 +141,17 @@ class MyActivity() : Activity() {
         val editText = findViewById(R.id.url_string) as? EditText
         val message = editText?.getText().toString()
 
-        val downloader = when (currentlySelectedProvider) {
-            "Origin" -> OriginDownloader()
-            "CDN" -> CDNDownloader()
-            "Lilli" -> LilliDownloader(currentlySelectedAlgorithm)
-            "BitTorrent" -> TorrentDownloader()
-            else -> null
+        val downloader = downloaders[currentlySelectedProvider]
+        val options = hashMapOf<String, String?>()
+
+        if (currentlySelectedProvider == "Lilli") {
+            options.put(LilliContract.ALGORITHM, currentlySelectedAlgorithm)
         }
 
         val connMgr = getApplicationContext()?.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
         val networkInfo = connMgr?.getActiveNetworkInfo()
         if (networkInfo != null && networkInfo.isConnected()) {
-            AsyncDownloader(downloader, this, mDbHelper, responseMessage).execute(message)
+            AsyncDownloader(downloader, this, options, mDbHelper, responseMessage).execute(message)
         }
     }
 
