@@ -50,16 +50,16 @@ class MyActivity() : Activity() {
             "BitTorrent" to TorrentDownloader
     )
     private val resources = mapOf(
-            "Origin" to array("http://lilli.etanzapinsky.com/resource1.jpg",
-                              "http://lilli.etanzapinsky.com/resource2.jpg",
-                              "http://lilli.etanzapinsky.com/resource3.jpg"),
-            "CDN" to array("http://uploads.samaarons.com/resource1.jpg",
-                           "http://uploads.samaarons.com/resource2.jpg",
-                           "http://uploads.samaarons.com/resource3.jpg"),
+            "Origin" to array("http://lilli.etanzapinsky.com/resource1.bin",
+                              "http://lilli.etanzapinsky.com/resource2.bin",
+                              "http://lilli.etanzapinsky.com/resource3.bin"),
+            "CDN" to array("http://uploads.samaarons.com/resource1.bin",
+                           "http://uploads.samaarons.com/resource2.bin",
+                           "http://uploads.samaarons.com/resource3.bin"),
             "Lilli" to array("resource1", "resource2", "resource3"),
-            "BitTorrent" to array("/sdcard/resource1.jpg.torrent",
-                                  "/sdcard/resource2.jpg.torrent",
-                                  "/sdcard/resource3.jpg.torrent")
+            "BitTorrent" to array("/sdcard/resource1.bin.torrent",
+                                  "/sdcard/resource2.bin.torrent",
+                                  "/sdcard/resource3.bin.torrent")
     )
 
     protected override fun onCreate(savedInstanceState : Bundle?) {
