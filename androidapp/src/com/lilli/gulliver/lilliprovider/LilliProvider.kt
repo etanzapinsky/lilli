@@ -96,9 +96,15 @@ class LilliProvider : ContentProvider() {
             val range = IntRange(0, neighbors.length())
             for (i in range) {
                 val neighbor = neighbors.getJSONObject(i)
-                val strategy = strategies[neighbor?.getString("connect_with")]
+                val strategyName = neighbor?.getString("connect_with")
+                val strategy = strategies[strategyName]
+                if (strategyName == "wifi_direct") {
+                    WifiDirectStrategy.connect(context, uri)
+                }
                 path = strategy?.get(context, uri, neighbor)
-
+                if (strategyName == "wifi_direct") {
+                    WifiDirectStrategy.disconnect(context)
+                }
                 if (path != null) {
                     break
                 }

@@ -12,11 +12,15 @@ import android.os.IBinder
 import android.os.Messenger
 import android.os.Message
 import android.os.Bundle
+import android.util.Log
+import android.os.Handler
 
 class WifiDirectStrategy {
     class object : LilliStrategy {
+        private val AUTHORITY  = "WifiDirect"
+
         /** Messenger for communicating with the service. */
-        private var mService : Messenger? = null;
+        private var mService : Messenger? = null
 
         /** Flag indicating whether we have called bind on the service. */
         private var mBound : Boolean = false
@@ -43,7 +47,7 @@ class WifiDirectStrategy {
             }
         }
 
-        override fun get(context: Context?, uri: Uri?, response: JSONObject?): String? {
+        public fun connect(context : Context?, uri : Uri?) {
             context?.bindService(Intent(context, javaClass<WifiDirectService>()), mConnection, Context.BIND_AUTO_CREATE)
             val key = uri?.getQueryParameter(LilliContract.USERNAME)
 
@@ -54,26 +58,16 @@ class WifiDirectStrategy {
                 val msg = Message.obtain(null, WifiDirectService.REQUEST_RESOURCE, 0, 0)
                 msg?.setData(data)
                 mService?.send(msg)
-
-                context?.unbindService(mConnection)
-                mBound = false
             }
-            return ""
 
-//            val peerPublicKey = response?.getString("public_key")
-//
-//            val filename = LilliProvider.getFilename(uri)
-//
-//            val wifiDirectIntent = Intent(this, javaClass<WifiDirectService>())
-//            context?.bindService(wifiDirectIntent, , Context.BIND_AUTO_CREATE)
-//
-//            val fos = context?.openFileOutput(filename, Context.MODE_PRIVATE)
-//            val input = socket.getInputStream()
-//
-//            IOUtils.copy(input, fos)
-//            fos?.close()
-//
-//            return context?.getFileStreamPath(filename)?.getPath()
+        }
+
+        override fun get(context: Context?, uri: Uri?, response: JSONObject?): String? {
+            return NetworkStrategy.get(context, uri, response)
+        }
+
+        public fun disconnect(context : Context?) {
+            context?.unbindService(mConnection)
         }
     }
 }

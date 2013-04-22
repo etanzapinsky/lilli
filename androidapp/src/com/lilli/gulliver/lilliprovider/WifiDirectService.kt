@@ -32,7 +32,9 @@ import android.os.Messenger
 
 class WifiDirectService : Service() {
     class object {
-        val REQUEST_RESOURCE : Int = 6998
+        public val REQUEST_RESOURCE : Int = 6998
+        public val RESPONSE : Int = 6999
+        public val FILEPATH : String = "filepath"
     }
     private val SERVICE = "urn:schemas-upnp-org:serivice:lilli:1"
     private val AUTHORITY = "WifiDirect"
@@ -48,7 +50,7 @@ class WifiDirectService : Service() {
                     Log.d(AUTHORITY, "resource request")
                     val publicKey = msg?.getData()?.getString(LilliContract.USERNAME)
                     if (publicKey != null) {
-                        receiver?.getFile(publicKey, "")
+                        receiver?.connect(publicKey)
                     }
                 }
                 else -> super.handleMessage(msg)
@@ -89,12 +91,6 @@ class WifiDirectService : Service() {
                     override fun onFailure(reasonCode : Int) {Log.d(AUTHORITY, "Added lilli local service failure")}
                 })
 
-        mManager?.addServiceRequest(mChannel, WifiP2pUpnpServiceRequest.newInstance(SERVICE),
-                object : WifiP2pManager.ActionListener {
-                    override fun onSuccess() {Log.d(AUTHORITY, "Added lilli service request success")}
-                    override fun onFailure(reasonCode : Int) {Log.d(AUTHORITY, "Added lilli request service failure")}
-                })
-
         mManager?.discoverPeers(mChannel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {Log.d(AUTHORITY, "peer discovery initialization success")}
             override fun onFailure(reasonCode : Int) {Log.d(AUTHORITY, "peer discovery initialization failure")}
@@ -107,7 +103,7 @@ class WifiDirectService : Service() {
     }
 
     public override fun onDestroy() {
-        this.unregisterReceiver(receiver);
+        this.unregisterReceiver(receiver)
     }
 
 
@@ -131,7 +127,7 @@ class WifiDirectBroadcastReceiver(val mManager : WifiP2pManager?, val mChannel :
         }
     }
 
-    public fun getFile(peerPublicKey : String, resource : String) : File? {
+    public fun connect(peerPublicKey : String) {
         // perform WifiDirect connection and receiveing of data here.
         mManager?.addServiceRequest(mChannel, WifiP2pUpnpServiceRequest.newInstance(peerPublicKey),
                 object : WifiP2pManager.ActionListener {
@@ -160,8 +156,6 @@ class WifiDirectBroadcastReceiver(val mManager : WifiP2pManager?, val mChannel :
                     override fun onSuccess() {Log.d(AUTHORITY, "Remove lilli " + peerPublicKey + " service request success")}
                     override fun onFailure(reasonCode : Int) {Log.d(AUTHORITY, "Remove lilli " + peerPublicKey + "service request failure")}
                 })
-
-        return null
     }
 
     public override fun onReceive(context: Context?, intent: Intent?) {
@@ -180,7 +174,7 @@ class WifiDirectBroadcastReceiver(val mManager : WifiP2pManager?, val mChannel :
             // The peer list has changed!  We should probably do something about
             // that.
             if (mManager != null) {
-                mManager.requestPeers(mChannel, peerListListener);
+                mManager.requestPeers(mChannel, peerListListener)
             }
 
         } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
@@ -200,9 +194,4 @@ class WifiDirectBroadcastReceiver(val mManager : WifiP2pManager?, val mChannel :
 
         }
     }
-//
-//    public fun getBinder() : Binder? {
-//            return mBinder
-//    }
-
 }
