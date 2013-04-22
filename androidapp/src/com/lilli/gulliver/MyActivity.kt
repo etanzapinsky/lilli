@@ -187,6 +187,10 @@ class MyActivity() : Activity() {
         TrashDialogFragment().show(getFragmentManager(), "trash")
     }
 
+    public fun deleteBinFiles(item : MenuItem?) {
+        DeleteFileDialogFragment().show(getFragmentManager(), "deleteFile")
+    }
+
     public fun refreshLocation(item : MenuItem?) {
         val intent = Intent(LOCATION_ACTION)
         val lm = getSystemService(Context.LOCATION_SERVICE) as? LocationManager
