@@ -185,9 +185,6 @@ def get(key):
             .filter(Edge.geog.ST_DWithin(g.edge.geog, WIFI_DIRECT_RANGE)) \
             .order_by(Edge.geog.ST_Distance(g.edge.geog)) \
             .limit(PEER_MAX)
-        direct_neighbors = [{'ip': n.ip,
-                             'public_key': n.public_key,
-                             'connect_with': 'wifi_direct'} for n in wifidirect_query.all()]
         other_neighbors = [{'ip': n.ip,
                             'public_key': n.public_key,
                             'connect_with': 'network'}
@@ -195,9 +192,7 @@ def get(key):
                                .filter(~Edge.id.in_([i[0] for i in wifidirect_query.with_entities(Edge.id)])) \
                                .limit(PEER_MAX - len(direct_neighbors)).all()
                            ]
-        neighbors = list(direct_neighbors)
-        neighbors.extend(other_neighbors)
-        return neighbors
+        return other_neighbors
 
     algorithm = {'ip': neighbors_using_ip,
                  'gps': neighbors_using_gps}
