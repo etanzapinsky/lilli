@@ -9,9 +9,9 @@
     <string name="refresh">Refresh</string>
     <string name="delete_title">Delete the local database?</string>
     <string name="text_hint">Enter a resource…</string>
-    <string name="button1">20KB File</string>
-    <string name="button2">2MB File</string>
-    <string name="button3">20MB File</string>
+    <string name="button1">100KB File</string>
+    <string name="button2">1MB File</string>
+    <string name="button3">10MB File</string>
     <string name="or">— or —</string>
     <string-array name="dropdown_options">
         <item>Origin</item>
