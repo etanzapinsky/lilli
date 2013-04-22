@@ -23,15 +23,46 @@
              android:layout_below="@id/spinner"
              android:visibility="gone"/>
 
+    <Button android:id="@+id/button1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lilli_spinner"
+            android:text="@string/button1"
+            android:onClick="getBuiltinResource"/>
+
+    <Button android:id="@+id/button2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/button1"
+            android:text="@string/button2"
+            android:onClick="getBuiltinResource"/>
+
+    <Button android:id="@+id/button3"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/button2"
+            android:text="@string/button3"
+            android:onClick="getBuiltinResource"/>
+
+    <TextView android:id="@+id/or"
+              android:layout_height="wrap_content"
+              android:layout_width="fill_parent"
+              android:text="@string/or"
+              android:layout_below="@id/button3"
+              android:gravity="center"
+              android:layout_marginTop="16dp"
+              android:layout_marginBottom="16dp"
+              android:textStyle="bold"/>
+
     <EditText
             android:id="@+id/url_string"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="textUri"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true"
             android:layout_toLeftOf="@+id/button"
-            android:hint="@string/text_hint"/>
+            android:hint="@string/text_hint"
+            android:layout_below="@id/or"/>
 
     <Button
             android:id="@+id/button"
@@ -39,8 +70,8 @@
             android:layout_height="wrap_content"
             android:text="@string/send"
             android:onClick="requestURL"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/or"/>
 
     <TextView
             android:id="@+id/response_text"

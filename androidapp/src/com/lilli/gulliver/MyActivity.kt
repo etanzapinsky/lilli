@@ -50,6 +50,18 @@ class MyActivity() : Activity() {
             "Lilli" to LilliDownloader,
             "BitTorrent" to TorrentDownloader
     )
+    private val resources = mapOf(
+            "Origin" to array("http://lilli.etanzapinsky.com/resource1.jpg",
+                              "http://lilli.etanzapinsky.com/resource2.jpg",
+                              "http://lilli.etanzapinsky.com/resource3.jpg"),
+            "CDN" to array("http://uploads.samaarons.com/resource1.jpg",
+                           "http://uploads.samaarons.com/resource2.jpg",
+                           "http://uploads.samaarons.com/resource3.jpg"),
+            "Lilli" to array("resource1", "resource2", "resource3"),
+            "BitTorrent" to array("/sdcard/resource1.jpg.torrent",
+                                  "/sdcard/resource2.jpg.torrent",
+                                  "/sdcard/resource3.jpg.torrent")
+    )
 
     protected override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,7 +152,10 @@ class MyActivity() : Activity() {
     public fun requestURL(view : View) {
         val editText = findViewById(R.id.url_string) as? EditText
         val message = editText?.getText().toString()
+        getResource(message)
+    }
 
+    public fun getResource(resource : String) {
         val downloader = downloaders[currentlySelectedProvider]
         val options = hashMapOf<String, String?>()
 
@@ -151,7 +166,20 @@ class MyActivity() : Activity() {
         val connMgr = getApplicationContext()?.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
         val networkInfo = connMgr?.getActiveNetworkInfo()
         if (networkInfo != null && networkInfo.isConnected()) {
-            AsyncDownloader(downloader, this, options, mDbHelper, responseMessage).execute(message)
+            AsyncDownloader(downloader, this, options, mDbHelper, responseMessage).execute(resource)
+        }
+    }
+
+    public fun getBuiltinResource(view : View) {
+        val index = when (view.getId()) {
+            R.id.button1 -> 0
+            R.id.button2 -> 1
+            R.id.button3 -> 2
+            else -> null
+        }
+
+        if (index != null) {
+            getResource(resources[currentlySelectedProvider]?.get(index))
         }
     }
 
