@@ -198,7 +198,9 @@ class MyActivity() : Activity() {
                 val currentDB = File(currentDBPath)
                 val backupDB = File(dir, "lilli.db")
 
-                IOUtils.copy(FileInputStream(currentDB), FileOutputStream(backupDB))
+                if (currentDB.exists()) {
+                    IOUtils.copy(FileInputStream(currentDB), FileOutputStream(backupDB))
+                }
             }
         }
     }
