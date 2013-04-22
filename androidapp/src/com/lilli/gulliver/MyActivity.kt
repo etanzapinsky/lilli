@@ -31,6 +31,8 @@ import android.widget.AdapterView
 import android.widget.Adapter
 import com.lilli.gulliver.lilliprovider.NetworkService
 import com.lilli.gulliver.lilliprovider.WifiDirectService
+import android.util.Log
+import com.lilli.gulliver.lilliprovider.LilliContract
 
 class MyActivity() : Activity() {
     class object {
@@ -42,6 +44,24 @@ class MyActivity() : Activity() {
     private var currentlySelectedProvider : String? = null
     private var currentlySelectedAlgorithm : String? = null
     private var algorithm_spinner : Spinner? = null
+    private val downloaders = mapOf(
+            "Origin" to OriginDownloader,
+            "CDN" to CDNDownloader,
+            "Lilli" to LilliDownloader,
+            "BitTorrent" to TorrentDownloader
+    )
+    private val resources = mapOf(
+            "Origin" to array("http://lilli.etanzapinsky.com/resource1.jpg",
+                              "http://lilli.etanzapinsky.com/resource2.jpg",
+                              "http://lilli.etanzapinsky.com/resource3.jpg"),
+            "CDN" to array("http://uploads.samaarons.com/resource1.jpg",
+                           "http://uploads.samaarons.com/resource2.jpg",
+                           "http://uploads.samaarons.com/resource3.jpg"),
+            "Lilli" to array("resource1", "resource2", "resource3"),
+            "BitTorrent" to array("/sdcard/resource1.jpg.torrent",
+                                  "/sdcard/resource2.jpg.torrent",
+                                  "/sdcard/resource3.jpg.torrent")
+    )
 
     protected override fun onCreate(savedInstanceState : Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,19 +152,34 @@ class MyActivity() : Activity() {
     public fun requestURL(view : View) {
         val editText = findViewById(R.id.url_string) as? EditText
         val message = editText?.getText().toString()
+        getResource(message)
+    }
 
-        val downloader = when (currentlySelectedProvider) {
-            "Origin" -> OriginDownloader()
-            "CDN" -> CDNDownloader()
-            "Lilli" -> LilliDownloader(currentlySelectedAlgorithm)
-            "BitTorrent" -> TorrentDownloader()
-            else -> null
+    public fun getResource(resource : String) {
+        val downloader = downloaders[currentlySelectedProvider]
+        val options = hashMapOf<String, String?>()
+
+        if (currentlySelectedProvider == "Lilli") {
+            options.put(LilliContract.ALGORITHM, currentlySelectedAlgorithm)
         }
 
         val connMgr = getApplicationContext()?.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
         val networkInfo = connMgr?.getActiveNetworkInfo()
         if (networkInfo != null && networkInfo.isConnected()) {
-            AsyncDownloader(downloader, this, mDbHelper, responseMessage).execute(message)
+            AsyncDownloader(downloader, this, options, mDbHelper, responseMessage).execute(resource)
+        }
+    }
+
+    public fun getBuiltinResource(view : View) {
+        val index = when (view.getId()) {
+            R.id.button1 -> 0
+            R.id.button2 -> 1
+            R.id.button3 -> 2
+            else -> null
+        }
+
+        if (index != null) {
+            getResource(resources[currentlySelectedProvider]?.get(index))
         }
     }
 

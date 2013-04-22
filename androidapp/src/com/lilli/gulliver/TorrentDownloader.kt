@@ -4,17 +4,10 @@ import android.content.Context
 import com.lilli.gulliver.torrentprovider.TorrentContract
 import java.io.File
 
-/**
- * Created with IntelliJ IDEA.
- * User: Etan
- * Date: 4/14/13
- * Time: 5:36 PM
- * To change this template use File | Settings | File Templates.
- */
-class TorrentDownloader : Downloader {
+object TorrentDownloader : Downloader {
     val AUTHORITY = "com.lilli.gulliver.torrentprovider"
 
-    override fun getData(resource: String, context: Context?): File? {
+    public override fun getData(resource: String, context: Context?, options: Map<String, String?>?): File? {
         val resolver = context?.getContentResolver()
         val uri = TorrentContract.Objects.CONTENT_URI
             .buildUpon()

@@ -7,52 +7,50 @@ import com.github.kevinsawicki.http.HttpRequest
 import org.json.JSONObject
 import java.io.File
 
-class LilliDownloader(val algorithm : String?) : Downloader {
-    class object {
-        private val APPNAME = "gulliver"
-        private val PUBLICKEY = "10ea41f4-a80c-4ce2-95a2-1e04ca03ea60"
-        public val CREDENTIALS : String = "credentials"
+object LilliDownloader : Downloader {
+    private val APPNAME = "gulliver"
+    private val PUBLICKEY = "10ea41f4-a80c-4ce2-95a2-1e04ca03ea60"
+    public val CREDENTIALS : String = "credentials"
 
-        fun getCredentials(context : Context?) : Map<String, String?> {
-            val credentials = context?.getSharedPreferences(CREDENTIALS, Context.MODE_PRIVATE)
+    fun getCredentials(context : Context?) : Map<String, String?> {
+        val credentials = context?.getSharedPreferences(CREDENTIALS, Context.MODE_PRIVATE)
 
-            val username = credentials?.getString(LilliContract.USERNAME, null)
-            val password = credentials?.getString(LilliContract.PASSWORD, null)
-            val auth = hashMapOf(Pair(LilliContract.USERNAME, username), Pair(LilliContract.PASSWORD, password))
+        val username = credentials?.getString(LilliContract.USERNAME, null)
+        val password = credentials?.getString(LilliContract.PASSWORD, null)
+        val auth = hashMapOf(Pair(LilliContract.USERNAME, username), Pair(LilliContract.PASSWORD, password))
 
-            if (username == null || password == null) {
-                val url = LilliProvider.ENDPOINT + "/edges"
+        if (username == null || password == null) {
+            val url = LilliProvider.ENDPOINT + "/edges"
 
-                val request = HttpRequest.post(url)
-                request?.basic(APPNAME, PUBLICKEY)
+            val request = HttpRequest.post(url)
+            request?.basic(APPNAME, PUBLICKEY)
 
-                if (request?.ok() == true) {
-                    val response = JSONObject(request?.body())
+            if (request?.ok() == true) {
+                val response = JSONObject(request?.body())
 
-                    val user = response.getString("public_key")
-                    val pass = response.getString("shared_secret")
+                val user = response.getString("public_key")
+                val pass = response.getString("shared_secret")
 
-                    val editor = credentials?.edit()
+                val editor = credentials?.edit()
 
-                    if (user != null) {
-                        auth.put(LilliContract.USERNAME, user)
-                        editor?.putString(LilliContract.USERNAME, user)
-                    }
-
-                    if (pass != null) {
-                        auth.put(LilliContract.PASSWORD, pass)
-                        editor?.putString(LilliContract.PASSWORD, pass)
-                    }
-
-                    editor?.commit()
+                if (user != null) {
+                    auth.put(LilliContract.USERNAME, user)
+                    editor?.putString(LilliContract.USERNAME, user)
                 }
-            }
 
-            return auth
+                if (pass != null) {
+                    auth.put(LilliContract.PASSWORD, pass)
+                    editor?.putString(LilliContract.PASSWORD, pass)
+                }
+
+                editor?.commit()
+            }
         }
+
+        return auth
     }
 
-    override fun getData(resource: String, context: Context?): File? {
+    override fun getData(resource: String, context: Context?, options: Map<String, String?>?): File? {
         val resolver = context?.getContentResolver()
         val credentials = getCredentials(context)
 
@@ -64,7 +62,7 @@ class LilliDownloader(val algorithm : String?) : Downloader {
                ?.appendPath(resource)
                ?.appendQueryParameter(LilliContract.USERNAME, username)
                ?.appendQueryParameter(LilliContract.PASSWORD, password)
-               ?.appendQueryParameter(LilliContract.ALGORITHM, algorithm?.toLowerCase()) // just for now
+               ?.appendQueryParameter(LilliContract.ALGORITHM, options?.get(LilliContract.ALGORITHM)?.toLowerCase())
                ?.build()
 
         val row = resolver?.query(uri, array(LilliContract.Objects.DATA), null, null, null)

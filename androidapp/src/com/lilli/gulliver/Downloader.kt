@@ -1,17 +1,8 @@
-/**
- * Created with IntelliJ IDEA.
- * User: Etan
- * Date: 4/3/13
- * Time: 10:50 AM
- * To change this template use File | Settings | File Templates.
- */
-
-
 package com.lilli.gulliver
 
 import android.content.Context
 import java.io.File
 
 trait Downloader {
-    fun getData(resource : String, context : Context?) : File?
+    fun getData(resource : String, context : Context?, options : Map<String, String?>?) : File?
 }

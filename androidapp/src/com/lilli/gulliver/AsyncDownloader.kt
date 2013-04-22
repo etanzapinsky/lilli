@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.ContentValues
 import android.widget.TextView
 
-class AsyncDownloader(val downloader : Downloader?, val context : Context?, val dbHelper : StatDbHelper?, val response : TextView?) : AsyncTask<String, Int, Long?>() {
+class AsyncDownloader(val downloader : Downloader?, val context : Context?, val options : Map<String, String?>?, val dbHelper : StatDbHelper?, val response : TextView?) : AsyncTask<String, Int, Long?>() {
     var startTime : Long = 0
 
     protected override fun doInBackground(vararg p0 : String?) : Long? {
@@ -13,7 +13,7 @@ class AsyncDownloader(val downloader : Downloader?, val context : Context?, val 
         startTime = System.nanoTime()
 
         if (first != null) {
-            val result = downloader?.getData(first, context)
+            val result = downloader?.getData(first, context, options)
             return result?.length()
         }
 
