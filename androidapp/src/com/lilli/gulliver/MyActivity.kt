@@ -150,11 +150,17 @@ class MyActivity() : Activity() {
     }
 
     public fun getResource(resource : String) {
-        val downloader = downloaders[currentlySelectedProvider]
+        var downloader = downloaders[currentlySelectedProvider]
         val options = hashMapOf<String, String?>()
 
         if (currentlySelectedProvider == "Lilli") {
             options.put(LilliContract.ALGORITHM, currentlySelectedAlgorithm)
+
+            if (currentlySelectedAlgorithm == "GPS") {
+                downloader = LilliGPSDownloader
+            } else if (currentlySelectedAlgorithm == "IP") {
+                downloader = LilliIPDownloader
+            }
         }
 
         val connMgr = getApplicationContext()?.getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
