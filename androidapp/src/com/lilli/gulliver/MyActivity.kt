@@ -32,6 +32,7 @@ import android.widget.Adapter
 import com.lilli.gulliver.lilliprovider.NetworkService
 import android.util.Log
 import com.lilli.gulliver.lilliprovider.LilliContract
+import org.apache.commons.io.IOUtils
 
 class MyActivity() : Activity() {
     class object {
@@ -188,27 +189,18 @@ class MyActivity() : Activity() {
     }
 
     public fun backupDb() {
-        try {
-            val sd = Environment.getExternalStorageDirectory()
+        val state = Environment.getExternalStorageState()
 
-            if (sd!!.canWrite()) {
-                val currentDBPath = mDbHelper?.getWritableDatabase()?.getPath()
-                val backupDBPath = "lilli.db"
-                if (currentDBPath != null) {
-                    val currentDB = File(currentDBPath)
-                    val backupDB = File(sd, backupDBPath)
+        if (state == Environment.MEDIA_MOUNTED) {
+            val dir = getExternalFilesDir(null)
+            val currentDBPath = mDbHelper?.getWritableDatabase()?.getPath()
+            if (currentDBPath != null) {
+                val currentDB = File(currentDBPath)
+                val backupDB = File(dir, "lilli.db")
 
-                    if (currentDB.exists()) {
-                        val src = FileInputStream(currentDB).getChannel()
-                        val dst = FileOutputStream(backupDB).getChannel()
-                        dst.transferFrom(src, 0, src?.size())
-                        src?.close()
-                        dst.close()
-                    }
-                }
+                IOUtils.copy(FileInputStream(currentDB), FileOutputStream(backupDB))
             }
         }
-        catch (e : Exception) {}
     }
 
 }
