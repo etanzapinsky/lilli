@@ -16,7 +16,7 @@ class LilliProvider : ContentProvider() {
     class object {
         val ENDPOINT = "http://lilli.etanzapinsky.com"
         private val AUTHORITY = "com.lilli.gulliver.lilliprovider"
-        private val strategies = mapOf("network" to NetworkStrategy, "wifi_direct" to WifiDirectStrategy)
+        private val strategies = mapOf("network" to NetworkStrategy)
 
         fun getFilename(uri : Uri?) : String {
             return "%s.tmp".format(uri?.getLastPathSegment())
@@ -96,15 +96,8 @@ class LilliProvider : ContentProvider() {
             val range = IntRange(0, neighbors.length())
             for (i in range) {
                 val neighbor = neighbors.getJSONObject(i)
-                val strategyName = neighbor?.getString("connect_with")
-                val strategy = strategies[strategyName]
-                if (strategyName == "wifi_direct") {
-                    WifiDirectStrategy.connect(context, uri)
-                }
+                val strategy = strategies[neighbor?.getString("connect_with")]
                 path = strategy?.get(context, uri, neighbor)
-                if (strategyName == "wifi_direct") {
-                    WifiDirectStrategy.disconnect(context)
-                }
                 if (path != null) {
                     break
                 }
