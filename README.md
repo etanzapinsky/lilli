@@ -4,8 +4,8 @@ A Last-Mile Mobile-to-Mobile CDN
 
 Authors
 =======
-[Etan Zapinsky](http://github.com/etanzapinsky)
-[Sam Aarons](http://github.com/saarons) 
+* [Etan Zapinsky](http://github.com/etanzapinsky)
+* [Sam Aarons](http://github.com/saarons) 
 
 License
 =======
